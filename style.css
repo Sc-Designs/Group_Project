@@ -1,9 +1,58 @@
 * {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("assets/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf");
 }
 html, body {
   height: 100%;
   width: 100%;
+}
+
+#main {
+  width: 100%;
+  height: 100vh;
+  background-image: url("./assets/photo-1710184756393-eeae4d4e5d48.avif");
+  background-size: cover;
+}
+#main #taskbar {
+  position: fixed;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.163);
+  bottom: 0;
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+}
+#main #taskbar img {
+  width: 1.8rem;
+  height: 1.8rem;
+  transition: all 0.2s ease;
+}
+#main #taskbar img:hover {
+  background-color: rgba(0, 0, 0, 0.46);
+  padding: 0.2rem;
+  border-radius: 5px;
+}
+#main #taskbar .timer {
+  background-color: rgba(0, 0, 0, 0.1);
+  height: 100%;
+  padding: 0rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+  color: #fff;
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-family: "Roboto";
+  font-size: 1rem;
 }
