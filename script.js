@@ -22,8 +22,8 @@ let previewImage = document.querySelector(".previewImage");
 let flag = 0;
 let isDragging = false;
 let bg = localStorage.getItem("backGround");
-main.style.backgroundImage =
-  `url('${bg}')` ||
+main.style.backgroundImage = bg !== null ? 
+  `url('${bg}')` :
   "url('./assets/photo-1636760243166-c2c0c62ba633.avif')";
 let offsetX, offsetY;
 let taskbarmenu = [
