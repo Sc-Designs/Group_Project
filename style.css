@@ -71,7 +71,6 @@ html, body {
   border-radius: 5px;
   overflow: hidden;
   transition: all 0.3s ease;
-  display: none;
   z-index: 999;
   display: none;
   flex-direction: column;
@@ -127,7 +126,6 @@ html, body {
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.3s ease;
-  display: none;
   z-index: 999;
   display: none;
   flex-direction: column;
@@ -140,6 +138,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 5vh;
 }
 #main #screen #Filestab .top h4 {
   font-family: "Roboto";
@@ -161,10 +160,13 @@ html, body {
   background-color: red;
 }
 #main #screen #Filestab .FileBody {
-  overflow-y: scroll;
   width: 100%;
   height: 100%;
   display: flex;
+  height: calc(100% - 5vh);
+}
+#main #screen #Filestab .FileBody::-webkit-scrollbar {
+  display: none;
 }
 #main #screen #Filestab .FileBody .fileNav {
   width: 20%;
@@ -190,11 +192,12 @@ html, body {
 #main #screen #Filestab .FileBody .fileTabScreen {
   width: 80%;
   height: 100%;
-  overflow-y: scroll;
   overflow-x: hidden;
+  overflow-y: scroll;
 }
 #main #screen #Filestab .FileBody .fileTabScreen .desktopScreen {
   padding: 1%;
+  display: block;
 }
 #main #screen #Filestab .FileBody .fileTabScreen .desktopScreen .desktopScreentop {
   display: grid;
@@ -207,6 +210,12 @@ html, body {
   align-items: center;
   justify-content: center;
   row-gap: 0.3em;
+  padding: 1%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .desktopScreen .desktopScreentop .icon:hover {
+  background: #00BFFF;
 }
 #main #screen #Filestab .FileBody .fileTabScreen .desktopScreen .desktopScreentop .icon img {
   width: 2em;
@@ -219,6 +228,130 @@ html, body {
   width: 4.5em;
   font-family: "Roboto";
   text-align: center;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .homeScreen {
+  padding: 1%;
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2em;
+  height: fit-content;
+  padding: 2% 1%;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .homeScreen .icon {
+  width: 4em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 0.3em;
+  padding: 1%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .homeScreen .icon:hover {
+  background: #00BFFF;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .homeScreen .icon img {
+  width: 2em;
+  aspect-ratio: 1/1;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .homeScreen .icon small {
+  color: #000;
+  white-space: wrap;
+  font-size: 0.7em;
+  width: 4.5em;
+  font-family: "Roboto";
+  text-align: center;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 2em;
+  row-gap: 2em;
+  height: fit-content;
+  padding: 2%;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen abbr {
+  text-decoration: none;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen abbr .icon {
+  width: 4em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 0.3em;
+  width: 100%;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen abbr .icon:hover {
+  transform: translateY(-5px);
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen abbr img {
+  width: 100%;
+  object-fit: cover;
+  filter: drop-shadow(0px 0px 2px #000);
+  border-radius: 5px;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .imageScreen abbr small {
+  color: #000;
+  white-space: wrap;
+  font-size: 0.7em;
+  width: 100%;
+  font-family: "Roboto";
+  text-align: center;
+}
+#main #screen #previewer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  height: 50vh;
+  background: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  display: none;
+  transition: all 0.3s ease;
+  z-index: 9;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+}
+#main #screen #previewer .top {
+  background: #000;
+  width: 100%;
+  padding: 0.5em 0.5em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
+}
+#main #screen #previewer .top h4 {
+  font-family: "Roboto";
+  font-weight: 300;
+  font-size: 0.7em;
+}
+#main #screen #previewer .top .menu {
+  display: flex;
+  column-gap: 1rem;
+  align-items: center;
+}
+#main #screen #previewer .top .menu div {
+  scale: 1.2;
+  cursor: pointer;
+  padding: 0em 0.5em;
+  transition: all 0.3s ease;
+}
+#main #screen #previewer .top .menu .close:hover {
+  background-color: red;
+}
+#main #screen #previewer .previewerScreen {
+  width: 100%;
+  height: calc(100% - 5vh);
+  background: #303030;
 }
 #main #allsettingBox {
   background-color: #1a1a1a;

@@ -70,7 +70,6 @@
          border-radius: 5px;
          overflow: hidden;
          transition: all 0.3s ease;
-         display: none;
          z-index: 999;
          display: none;
          flex-direction: column;
@@ -128,7 +127,6 @@
          overflow-x: hidden;
          overflow-y: auto;
          transition: all 0.3s ease;
-         display: none;
          z-index: 999;
          display: none;
          flex-direction: column;
@@ -141,6 +139,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 5vh;
             h4{
                font-family: "Roboto";
                font-weight: 300;
@@ -162,10 +161,14 @@
             }
          }
          .FileBody{
-            overflow-y: scroll;
             width: 100%;
             height: 100%;
             display: flex;
+            height: calc(100% - 5vh);
+            &::-webkit-scrollbar{
+               display: none;
+            }
+            
             
             .fileNav{
                width: 20%;
@@ -193,10 +196,11 @@
             .fileTabScreen{
                width: 80%;
                height: 100%;
-               overflow-y: scroll;
                overflow-x: hidden;
+               overflow-y: scroll;
                .desktopScreen{
                   padding: 1%;
+                  display: block;
                   .desktopScreentop{
                      display: grid;
                      grid-template-columns: repeat(3fr,1fr);
@@ -207,6 +211,13 @@
                         align-items: center;
                         justify-content: center;
                         row-gap: 0.3em;
+                        padding: 1%;
+                        cursor: pointer;
+                        transition: background 0.3s ease;
+
+                        &:hover{
+                           background: #00BFFF;
+                        }
                         img{
                            width: 2em;
                            aspect-ratio: 1/1;
@@ -222,7 +233,138 @@
                      }
                   }
                }
+               .homeScreen{
+                  padding: 1%;
+                  display: none;
+                     grid-template-columns: repeat(5,1fr);
+                     gap: 2em;
+                     height: fit-content;
+                     padding: 2% 1%;
+
+
+                     .icon{
+                        width: 4em;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        row-gap: 0.3em;
+                        padding: 1%;
+                        cursor: pointer;
+                        transition: background 0.3s ease;
+
+                        &:hover{
+                           background: #00BFFF;
+                        }
+                        img{
+                           width: 2em;
+                           aspect-ratio: 1/1;
+                        }
+                        small{
+                           color: #000;
+                           white-space: wrap;
+                           font-size: 0.7em;
+                           width: 4.5em;
+                           font-family: "Roboto";
+                           text-align: center;
+                        }
+                  }
+               }
+               .imageScreen{
+                  display: none;
+                     grid-template-columns: repeat(3,1fr);
+                     column-gap: 2em;
+                     row-gap: 2em;
+                     height: fit-content;
+                     padding: 2%;
+                     align-content: center;
+                     justify-content: center;
+                     width: 100%;
+
+                     abbr{
+                        text-decoration: none;
+
+                        .icon{
+                           width: 4em;
+                           display: flex;
+                           flex-direction: column;
+                           align-items: center;
+                           justify-content: center;
+                           row-gap: 0.3em;
+                           width: 100%;
+                           transition: transform 0.3s ease;
+                           cursor: pointer;
+                           
+                           &:hover{
+                              transform: translateY(-5px);
+                           }
+                        }
+                        img{
+                           width: 100%;
+                           object-fit: cover;
+                           filter: drop-shadow(0px 0px 2px #000);
+                           border-radius: 5px;
+                        }
+                        small{
+                           color: #000;
+                           white-space: wrap;
+                           font-size: 0.7em;
+                           width: 100%;
+                           font-family: "Roboto";
+                           text-align: center;
+                        }
+                  }
+               }
             }
+         }
+      }
+      #previewer{
+         position: absolute;
+         top:50%;
+         left: 50%;
+         transform: translate(-50%,-50%);
+         width: 50vw;
+         height: 50vh;
+         background: #fff;
+         border-radius: 5px;
+         overflow: hidden;
+         display: none;
+         transition: all 0.3s ease;
+         z-index: 9;
+         box-shadow: 0px 0px 5px #000000a9;
+
+         .top{
+            background: #000;
+            width: 100%;
+            padding: 0.5em 0.5em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 5vh;
+            h4{
+               font-family: "Roboto";
+               font-weight: 300;
+               font-size: 0.7em;
+            }
+            .menu{
+               display: flex;
+               column-gap: 1rem;
+               align-items: center;
+               div{
+                  scale: 1.2;
+                  cursor: pointer;
+                  padding: 0em 0.5em;
+                  transition: all 0.3s ease;
+               }
+               .close:hover{
+                  background-color: red;
+               }
+            }
+         }
+         .previewerScreen{
+            width: 100%;
+            height: calc(100% - 5vh);
+            background: #303030;
          }
       }
    }
