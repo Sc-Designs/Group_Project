@@ -14,9 +14,17 @@ let upperrow = document.querySelector(".upperrow");
 let lowerrow = document.querySelector(".lowerrow");
 let allItems = document.querySelector(".allitems");
 let fileTabScreen = document.querySelector(".fileTabScreen");
+let previewer = document.querySelector("#previewer");
+let previewerclose = document.querySelector(".previewerclose");
+let previewermaximize = document.querySelector(".previewermaximize");
+let previewerminimize = document.querySelector(".previewerminimize");
+let previewImage = document.querySelector(".previewImage");
 let flag = 0;
 let isDragging = false;
-
+let bg = localStorage.getItem("backGround");
+main.style.backgroundImage =
+  `url('${bg}')` ||
+  "url('./assets/photo-1636760243166-c2c0c62ba633.avif')";
 let offsetX, offsetY;
 let taskbarmenu = [
   {
@@ -420,3 +428,90 @@ Filestab.addEventListener("mouseup", () => {
   Filestab.style.zIndex = "5";
   Notetab.style.zIndex = "2";
 });
+
+let fileNav = document.querySelector(".fileNav");
+let desktopScreen = document.querySelector(".desktopScreen");
+let homeScreen = document.querySelector(".homeScreen");
+let imageScreen = document.querySelector(".imageScreen");
+fileNav.addEventListener("click",(e)=>{
+  if(e.target.className === 'desktop'){
+    desktopScreen.style.display = "block";
+    homeScreen.style.display = "none";
+    imageScreen.style.display = "none";
+  } else if (e.target.className === "home") {
+    homeScreen.style.display = "grid";
+    imageScreen.style.display = "none";
+    desktopScreen.style.display = "none";
+  } else if (e.target.className === "image") {
+    imageScreen.style.display = "grid";
+    homeScreen.style.display = "none";
+    desktopScreen.style.display = "none";
+  }
+})
+
+imageScreen.addEventListener("dblclick",(e)=>{
+  if(e.target.classList.contains("1bg")){
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src)
+    main.style.backgroundImage = `url("${e.target.src}")`
+  }
+  else if(e.target.classList.contains("2bg")){
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src);
+    main.style.backgroundImage = `url("${e.target.src}")`
+  }
+  else if(e.target.classList.contains("3bg")){
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src);
+    main.style.backgroundImage = `url("${e.target.src}")`
+  }
+  else if(e.target.classList.contains("4bg")){
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src);
+    main.style.backgroundImage = `url("${e.target.src}")`
+  }
+})
+let previewerScreen = document.querySelector(".previewerScreen");
+imageScreen.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("1bg")){
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image)
+  }
+  else if(e.target.classList.contains("2bg")){
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image)
+  }
+  else if(e.target.classList.contains("3bg")){
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image)
+  }
+  else if(e.target.classList.contains("4bg")){
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image)
+  }
+})
+
+// main.addEventListener("contextmenu", function (e) {
+//   e.preventDefault();
+//   console.log("You right-clicked!");
+// });
