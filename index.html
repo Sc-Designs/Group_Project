@@ -5,14 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Os System</title>
     <link rel="stylesheet" href="style.css">
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
 </head>
 <body>
     <section id="main">
-
+        <section id="screen">
+            <section id="Notetab">
+                <div class="top">
+                    <h4>Notes</h4>
+                    <div class="menu">
+                        <div class="noteminimize">_</div>
+                        <div class="notemaximize">▢</div>
+                        <div class="noteclose close">×</div>
+                    </div>
+                </div>
+                <div class="Notebody">
+                    <p contenteditable="true">Type Here....</p>
+                </div>
+            </section>
+            <section id="Filestab">
+                <div class="top">
+                    <h4>MyComputer</h4>
+                    <div class="menu">
+                        <div class="fileminimize">_</div>
+                        <div class="filemaximize">▢</div>
+                        <div class="fileclose close">×</div>
+                    </div>
+                </div>
+                <div class="FileBody">
+                    <div class="fileNav">
+                        <h1>💻 Desktop</h1>
+                        <h1>🏡 Home</h1>
+                        <h1>🖼️ Image</h1>
+                        <h1>🎥 Video</h1>
+                        <h1>📁 Files</h1>
+                    </div>
+                    <div class="fileTabScreen">
+                        
+                    </div>
+                </div>
+            </section>
+        </section>
+        <div id="allsettingBox">
+            <div class="upperrow"></div>
+            <div class="lowerrow"></div>
+            <div class="sound">
+                <i class="ri-volume-up-line"></i>
+                <input type="range">
+            </div>
+            <div class="brightness">
+                <i class="ri-sun-line"></i>
+                    <input type="range" min="10" max="100" value="80" step="1">
+            </div>
+        </div>
         <section id="taskbar">
+            <div class="allitems">   
+            </div>
             <div class="timer">
-                <h6>Time: <span class="time"> 23:40:00 </span></h6>
-                <h6 class="date">Date: 19-06-2025</h6>
+                <div class="settings">
+                </div>
+                <abbr title="Time">
+                    <div class="timebar">
+                        <h6>Time: <span class="time">00 : 00 : 00 </span></h6>
+                        <h6>Date: <span class="date">00-00-0000</span></h6>
+                    </abbr>
+                    </div>
             </div>
         </section>
     </section>
