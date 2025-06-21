@@ -14,13 +14,9 @@ let upperrow = document.querySelector(".upperrow");
 let lowerrow = document.querySelector(".lowerrow");
 let allItems = document.querySelector(".allitems");
 let fileTabScreen = document.querySelector(".fileTabScreen");
-let previewer = document.querySelector("#previewer");
-let previewerclose = document.querySelector(".previewerclose");
-let previewermaximize = document.querySelector(".previewermaximize");
-let previewerminimize = document.querySelector(".previewerminimize");
-let previewImage = document.querySelector(".previewImage");
 let flag = 0;
 let isDragging = false;
+let previewFalg = 0;
 let bg = localStorage.getItem("backGround");
 main.style.backgroundImage = bg !== null ? 
   `url('${bg}')` :
@@ -361,6 +357,7 @@ allItems.addEventListener("click", (e) => {
     Notetab.style.top = "50%";
     Notetab.style.transition = "top 0.3s ease";
     Filestab.style.zIndex = "9";
+    previewer.style.zIndex = "10";
     Notetab.style.zIndex = "99";
     iconFlag = 1;
   } else if (e.target.classList.contains("note") && iconFlag === 1) {
@@ -371,7 +368,9 @@ allItems.addEventListener("click", (e) => {
   } else if (e.target.classList.contains("file") && filesiconFlag === 0) {
     Filestab.style.scale = "1";
     Filestab.style.top = "50%";
+    Filestab.style.transition = "top 0.3s ease";
     Notetab.style.zIndex = "9";
+    previewer.style.zIndex = "10";
     Filestab.style.zIndex = "99";
     filesiconFlag = 1;
   } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
@@ -379,6 +378,19 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.top = "100%";
     Filestab.style.zIndex = "9";
     filesiconFlag = 0;
+  } else if (e.target.classList.contains("photo") && previewFalg === 0) {
+    previewer.style.scale = "1";
+    previewer.style.top = "50%";
+    previewer.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    previewer.style.zIndex = "99";
+    previewFalg = 1;
+  } else if (e.target.classList.contains("photo") && previewFalg === 1) {
+    previewer.style.scale = "0.2";
+    previewer.style.top = "100%";
+    previewer.style.zIndex = "9";
+    previewFalg = 0;
   }
 });
 
@@ -402,8 +414,9 @@ Notetab.addEventListener("mousemove", (e) => {
 
 Notetab.addEventListener("mouseup", () => {
   isDragging = false;
-  Notetab.style.zIndex = "5";
-  Filestab.style.zIndex = "2";
+  Notetab.style.zIndex = "4";
+  Filestab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
 });
 Filestab.addEventListener("mousedown", (e) => {
   isDragging = true;
@@ -414,7 +427,7 @@ Filestab.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   Filestab.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
-  const FileRect = Notetab.getBoundingClientRect();
+  const FileRect = Filestab.getBoundingClientRect();
 
   let x = e.clientX - containerRect.left - offsetX;
   let y = e.clientY - containerRect.top - offsetY;
@@ -425,8 +438,9 @@ Filestab.addEventListener("mousemove", (e) => {
 
 Filestab.addEventListener("mouseup", () => {
   isDragging = false;
-  Filestab.style.zIndex = "5";
-  Notetab.style.zIndex = "2";
+  Filestab.style.zIndex = "4";
+  Notetab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
 });
 
 let fileNav = document.querySelector(".fileNav");
@@ -449,7 +463,65 @@ fileNav.addEventListener("click",(e)=>{
   }
 })
 
-imageScreen.addEventListener("dblclick",(e)=>{
+let previewer = document.querySelector("#previewer");
+let previewerclose = document.querySelector(".previewerclose");
+let previewermaximize = document.querySelector(".previewermaximize");
+let previewerminimize = document.querySelector(".previewerminimize");
+let previewImage = document.querySelector(".previewImage");
+previewermaximize.addEventListener("click", () => {
+  if (previewFalg === 0) {
+    previewer.style.width = "100vw";
+    previewer.style.height = "100vh";
+    previewer.style.transition = "width 0.4s ease, height 0.4s ease";
+    previewer.style.top = "50%";
+    previewer.style.left = "50%";
+    previewFalg = 1;
+  } else {
+    previewer.style.width = "50vw";
+    previewer.style.height = "50vh";
+    previewer.style.transition = "width 0.4s ease, height 0.4s ease";
+    previewer.style.top = "50%";
+    previewer.style.left = "50%";
+    previewFalg = 0;
+  }
+});
+
+previewerminimize.addEventListener("click", () => {
+  previewer.style.scale = "0.2";
+  previewer.style.top = "100%";
+});
+previewerclose.addEventListener("click", () => {
+  previewer.style.display = "none";
+  taskbarmenu = taskbarmenu.filter((item) => item.class !== "photo");
+  menuBar();
+});
+
+previewer.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  offsetX = e.clientX - previewer.offsetLeft;
+  offsetY = e.clientY - previewer.offsetTop;
+});
+previewer.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  previewer.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const FileRect = previewer.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  previewer.style.top = y + "px";
+  previewer.style.left = x + "px";
+});
+
+previewer.addEventListener("mouseup", () => {
+  isDragging = false;
+  previewer.style.zIndex = "4";
+  Filestab.style.zIndex = "3";
+  Notetab.style.zIndex = "2";
+});
+
+imageScreen.addEventListener("click",(e)=>{
   if(e.target.classList.contains("1bg")){
     localStorage.removeItem("backGround");
     localStorage.setItem("backGround", e.target.src)
@@ -470,10 +542,17 @@ imageScreen.addEventListener("dblclick",(e)=>{
     localStorage.setItem("backGround", e.target.src);
     main.style.backgroundImage = `url("${e.target.src}")`
   }
+  else if(e.target.classList.contains("5bg")){
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src);
+    main.style.backgroundImage = `url("${e.target.src}")`
+  }
 })
 let previewerScreen = document.querySelector(".previewerScreen");
-imageScreen.addEventListener("click",(e)=>{
+
+imageScreen.addEventListener("dblclick",(e)=>{
   if(e.target.classList.contains("1bg")){
+    previewer.style.display = "block";
     previewerScreen.innerHTML = "";
     let image = document.createElement("img");
     image.src = e.target.src;
@@ -481,8 +560,23 @@ imageScreen.addEventListener("click",(e)=>{
     image.style.width = "100%";
     image.style.objectFit = "cover";
     previewerScreen.appendChild(image)
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar()
   }
   else if(e.target.classList.contains("2bg")){
+    previewer.style.display = "block";
+    previewer.style.scale = "0";
+    previewer.style.transformOrigin = "left";
+    previewer.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      previewer.style.scale = "1";
+    }, 50);
     previewerScreen.innerHTML = "";
     let image = document.createElement("img");
     image.src = e.target.src;
@@ -490,8 +584,23 @@ imageScreen.addEventListener("click",(e)=>{
     image.style.width = "100%";
     image.style.objectFit = "cover";
     previewerScreen.appendChild(image)
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
   }
   else if(e.target.classList.contains("3bg")){
+    previewer.style.display = "block";
+    previewer.style.scale = "0";
+    previewer.style.transformOrigin = "left";
+    previewer.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      previewer.style.scale = "1";
+    }, 50);
     previewerScreen.innerHTML = "";
     let image = document.createElement("img");
     image.src = e.target.src;
@@ -499,8 +608,71 @@ imageScreen.addEventListener("click",(e)=>{
     image.style.width = "100%";
     image.style.objectFit = "cover";
     previewerScreen.appendChild(image)
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
   }
   else if(e.target.classList.contains("4bg")){
+    previewer.style.display = "block";
+    previewer.style.scale = "0";
+    previewer.style.transformOrigin = "left";
+    previewer.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      previewer.style.scale = "1";
+    }, 50);
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image);
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
+  } 
+  else if(e.target.classList.contains("5bg")){
+    previewer.style.display = "block";
+    previewer.style.scale = "0";
+    previewer.style.transformOrigin = "left";
+    previewer.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      previewer.style.scale = "1";
+    }, 50);
+    previewerScreen.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = e.target.src;
+    image.style.height = "100%";
+    image.style.width = "100%";
+    image.style.objectFit = "cover";
+    previewerScreen.appendChild(image);
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
+  } 
+  else if(e.target.classList.contains("logo")){
+    previewer.style.display = "block";
+    previewer.style.scale = "0";
+    previewer.style.transformOrigin = "left";
+    previewer.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      previewer.style.scale = "1";
+    }, 50);
     previewerScreen.innerHTML = "";
     let image = document.createElement("img");
     image.src = e.target.src;
@@ -508,7 +680,15 @@ imageScreen.addEventListener("click",(e)=>{
     image.style.width = "100%";
     image.style.objectFit = "cover";
     previewerScreen.appendChild(image)
-  }
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
+  } 
 })
 
 // main.addEventListener("contextmenu", function (e) {
