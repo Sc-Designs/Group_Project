@@ -16,7 +16,6 @@ let allItems = document.querySelector(".allitems");
 let fileTabScreen = document.querySelector(".fileTabScreen");
 let flag = 0;
 let isDragging = false;
-let previewFalg = 0;
 let bg = localStorage.getItem("backGround");
 main.style.backgroundImage = bg !== null ? 
   `url('${bg}')` :
@@ -133,6 +132,7 @@ const menuBar = ()=>{
       allItems.appendChild(imageTag);
   }
 }
+// Time and Date function
 setInterval(()=>{
     let date = new Date();
     let houre = date.getHours().toString().padStart(2, "0");
@@ -148,22 +148,24 @@ taskbarIcon.forEach((item)=>{
 })
 FullDate.textContent = `${Day}-${Month}-${Year}`;
 
+// Print DesktopApp
 DesktopApplication.forEach((item,i)=>{
     container.innerHTML += `<div class="software ${item.class}" style="top:${Math.floor((i+0.2)*10)}%; left:0.5%">
                 <img src="${item.src}" alt="">
                 <h6>${item.name}</h6>
             </div>` 
 })
+
+// All screen app Drag function
 let box = document.querySelectorAll(".software");
 box.forEach((item)=>{
-  
   item.addEventListener("mousedown", (e) => {
+    isDragging = false;
     isDragging = true;
     offsetX = e.clientX - item.offsetLeft;
     offsetY = e.clientY - item.offsetTop;
     
   });
-  
   item.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
     const containerRect = container.getBoundingClientRect();
@@ -178,16 +180,13 @@ box.forEach((item)=>{
     item.style.left = x + "px";
     item.style.top = y + "px";
   });
-  
   item.addEventListener("mouseup", () => {
     isDragging = false;
   });
-  
 })
 brightnessScale.addEventListener("input",()=>{
   main.style.filter = `brightness(${brightnessScale.value / 100})`
 })
-
 settings.addEventListener("click",(e)=>{
   if (e.target.className === "ri-arrow-up-s-line" && flag === 0) {
     allsettingBox.style.bottom = "10%";
@@ -199,7 +198,6 @@ settings.addEventListener("click",(e)=>{
     flag = 0;
   }
 })
-
 for(let i = 0; i<3; i++){
   let structure = `<div class="icon-box ${iconOfAllSetings[i].class}">
                     <i class="${iconOfAllSetings[i].icon}"></i>
@@ -215,8 +213,8 @@ for (let i = 3; i < iconOfAllSetings.length; i++) {
   lowerrow.innerHTML += structure;
 }
 
+// Taskbar view and hide function
 let hideTaskbarTimeout;
-
 main.addEventListener("mousemove", (e) => {
   const rect = main.getBoundingClientRect();
   if (e.clientY >= rect.bottom - 70) {
@@ -231,18 +229,17 @@ main.addEventListener("mousemove", (e) => {
     }
   }
 });
-
 taskbar.addEventListener("mouseenter", () => {
   if (hideTaskbarTimeout) clearTimeout(hideTaskbarTimeout);
   taskbar.style.bottom = "0%";
 });
-
 taskbar.addEventListener("mouseleave", () => {
   hideTaskbarTimeout = setTimeout(() => {
     taskbar.style.bottom = "-10%";
   }, 1500);
 });
 
+// Note tab and its funtion like minimaize, maximize and close
 let Notetab= document.querySelector("#Notetab");
 let notemaximize = document.querySelector(".notemaximize");
 let tabFlag = 0;
@@ -263,7 +260,6 @@ notemaximize.addEventListener("click",()=>{
     tabFlag = 0;
   }
 })
-
 let noteminimize = document.querySelector(".noteminimize");
 noteminimize.addEventListener("click",()=>{
     Notetab.style.scale = "0.2";
@@ -277,43 +273,35 @@ noteclose.addEventListener("click", ()=>{
   menuBar();
 })
 menuBar()
-let iconFlag = 0;
 
-container.addEventListener("dblclick", (e) => {
-  if (e.target.classList.contains("note")) {
-    Notetab.style.display = "flex";
-    Notetab.style.scale = "0";
-    Notetab.style.transformOrigin = "left";
-    Notetab.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      Notetab.style.scale = "1";
-    }, 50);
-    if (taskbarmenu.some((item) => item.class === "note")) return;
-    taskbarmenu.push({
-      src: "./assets/notes.png",
-      class: "note",
-      isActive: true,
-    });
-    menuBar();
-  }
-
-  if (e.target.classList.contains("file")) {
-    Filestab.style.display = "flex";
-    Filestab.style.scale = "0";
-    Filestab.style.transformOrigin = "left";
-    Filestab.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      Filestab.style.scale = "1";
-    }, 50);
-    if (taskbarmenu.some((item) => item.class === "file")) return;
-    taskbarmenu.push({
-      src: "./assets/folder.png",
-      class: "file",
-      isActive: true,
-    });
-    menuBar();
-  }
+// NoteTab Drag function
+Notetab.addEventListener("mousedown", (e) => {
+  isDragging = false;
+  isDragging = true;
+  offsetX = e.clientX - Notetab.offsetLeft;
+  offsetY = e.clientY - Notetab.offsetTop;
 });
+Notetab.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  Notetab.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const NodeRect = Notetab.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+  
+  Notetab.style.top = y + "px";
+  Notetab.style.left = x + "px";
+});
+Notetab.addEventListener("mouseup", () => {
+  isDragging = false;
+  Notetab.style.zIndex = "5";
+  Chrome.style.zIndex = "4";
+  Filestab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
+});
+
+// File tab and it's funtion like minimize, maximize and close
 let Filestab = document.querySelector("#Filestab");
 let filesmaximize = document.querySelector(".filemaximize");
 let fileFlag = 0;
@@ -334,7 +322,6 @@ filesmaximize.addEventListener("click", () => {
     fileFlag = 0;
   }
 });
-
 let filesminimize = document.querySelector(".fileminimize");
 filesminimize .addEventListener("click", () => {
   Filestab.style.scale = "0.2";
@@ -347,78 +334,10 @@ filesclose.addEventListener("click", () => {
   menuBar();
 });
 menuBar()
-let filesiconFlag = 0;
 
-
-
-allItems.addEventListener("click", (e) => {
-  if (e.target.classList.contains("note") && iconFlag === 0) {
-    Notetab.style.scale = "1";
-    Notetab.style.top = "50%";
-    Notetab.style.transition = "top 0.3s ease";
-    Filestab.style.zIndex = "9";
-    previewer.style.zIndex = "10";
-    Notetab.style.zIndex = "99";
-    iconFlag = 1;
-  } else if (e.target.classList.contains("note") && iconFlag === 1) {
-    Notetab.style.scale = "0.2";
-    Notetab.style.top = "100%";
-    Notetab.style.zIndex = "9";
-    iconFlag = 0;
-  } else if (e.target.classList.contains("file") && filesiconFlag === 0) {
-    Filestab.style.scale = "1";
-    Filestab.style.top = "50%";
-    Filestab.style.transition = "top 0.3s ease";
-    Notetab.style.zIndex = "9";
-    previewer.style.zIndex = "10";
-    Filestab.style.zIndex = "99";
-    filesiconFlag = 1;
-  } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
-    Filestab.style.scale = "0.2";
-    Filestab.style.top = "100%";
-    Filestab.style.zIndex = "9";
-    filesiconFlag = 0;
-  } else if (e.target.classList.contains("photo") && previewFalg === 0) {
-    previewer.style.scale = "1";
-    previewer.style.top = "50%";
-    previewer.style.transition = "top 0.3s ease";
-    Notetab.style.zIndex = "9";
-    Filestab.style.zIndex = "10";
-    previewer.style.zIndex = "99";
-    previewFalg = 1;
-  } else if (e.target.classList.contains("photo") && previewFalg === 1) {
-    previewer.style.scale = "0.2";
-    previewer.style.top = "100%";
-    previewer.style.zIndex = "9";
-    previewFalg = 0;
-  }
-});
-
-Notetab.addEventListener("mousedown", (e) => {
-  isDragging = true;
-  offsetX = e.clientX - Notetab.offsetLeft;
-  offsetY = e.clientY - Notetab.offsetTop;
-});
-Notetab.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  Notetab.style.zIndex = "999";
-  const containerRect = container.getBoundingClientRect();
-  const NodeRect = Notetab.getBoundingClientRect();
-
-  let x = e.clientX - containerRect.left - offsetX;
-  let y = e.clientY - containerRect.top - offsetY;
-  
-  Notetab.style.top = y + "px";
-  Notetab.style.left = x + "px";
-});
-
-Notetab.addEventListener("mouseup", () => {
-  isDragging = false;
-  Notetab.style.zIndex = "4";
-  Filestab.style.zIndex = "3";
-  previewer.style.zIndex = "2";
-});
+// FileTab Drag function
 Filestab.addEventListener("mousedown", (e) => {
+  isDragging = false;
   isDragging = true;
   offsetX = e.clientX - Filestab.offsetLeft;
   offsetY = e.clientY - Filestab.offsetTop;
@@ -438,11 +357,13 @@ Filestab.addEventListener("mousemove", (e) => {
 
 Filestab.addEventListener("mouseup", () => {
   isDragging = false;
-  Filestab.style.zIndex = "4";
+  Filestab.style.zIndex = "5";
+  Chrome.style.zIndex = "4";
   Notetab.style.zIndex = "3";
   previewer.style.zIndex = "2";
 });
 
+// file viewer and functions for Child
 let fileNav = document.querySelector(".fileNav");
 let desktopScreen = document.querySelector(".desktopScreen");
 let homeScreen = document.querySelector(".homeScreen");
@@ -463,6 +384,7 @@ fileNav.addEventListener("click",(e)=>{
   }
 })
 
+// Previwer Tab and it's functions like minimize, maximize, close
 let previewer = document.querySelector("#previewer");
 let previewerclose = document.querySelector(".previewerclose");
 let previewermaximize = document.querySelector(".previewermaximize");
@@ -485,7 +407,6 @@ previewermaximize.addEventListener("click", () => {
     previewFalg = 0;
   }
 });
-
 previewerminimize.addEventListener("click", () => {
   previewer.style.scale = "0.2";
   previewer.style.top = "100%";
@@ -496,7 +417,9 @@ previewerclose.addEventListener("click", () => {
   menuBar();
 });
 
+// Previwer Drag functions
 previewer.addEventListener("mousedown", (e) => {
+  isDragging = false;
   isDragging = true;
   offsetX = e.clientX - previewer.offsetLeft;
   offsetY = e.clientY - previewer.offsetTop;
@@ -513,14 +436,15 @@ previewer.addEventListener("mousemove", (e) => {
   previewer.style.top = y + "px";
   previewer.style.left = x + "px";
 });
-
 previewer.addEventListener("mouseup", () => {
   isDragging = false;
-  previewer.style.zIndex = "4";
+  previewer.style.zIndex = "5";
+  Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
   Notetab.style.zIndex = "2";
 });
 
+// Screen wallpaper change
 imageScreen.addEventListener("click",(e)=>{
   if(e.target.classList.contains("1bg")){
     localStorage.removeItem("backGround");
@@ -548,8 +472,9 @@ imageScreen.addEventListener("click",(e)=>{
     main.style.backgroundImage = `url("${e.target.src}")`
   }
 })
-let previewerScreen = document.querySelector(".previewerScreen");
 
+// Pic viewer Tab
+let previewerScreen = document.querySelector(".previewerScreen");
 imageScreen.addEventListener("dblclick",(e)=>{
   if(e.target.classList.contains("1bg")){
     previewer.style.display = "block";
@@ -695,3 +620,243 @@ imageScreen.addEventListener("dblclick",(e)=>{
 //   e.preventDefault();
 //   console.log("You right-clicked!");
 // });
+// Chrome tab and it's funtioc like minimize and maximize
+let Chrome = document.querySelector("#chrome");
+let ChromeFlag = 0;
+let chromeFlag = 0;
+let chromemaximize = document.querySelector(".chromemaximize");
+chromemaximize.addEventListener("click", () => {
+  if (chromeFlag === 0) {
+    Chrome.style.width = "100vw";
+    Chrome.style.height = "100vh";
+    Chrome.style.transition = "width 0.4s ease, height 0.4s ease";
+    Chrome.style.top = "50%";
+    Chrome.style.left = "50%";
+    chromeFlag = 1;
+  } else {
+    Chrome.style.width = "50vw";
+    Chrome.style.height = "50vh";
+    Chrome.style.transition = "width 0.4s ease, height 0.4s ease";
+    Chrome.style.top = "50%";
+    Chrome.style.left = "50%";
+    chromeFlag = 0;
+  }
+});
+let chromeminimize = document.querySelector(".chromeminimize");
+chromeminimize.addEventListener("click", () => {
+  Chrome.style.scale = "0.2";
+  Chrome.style.transition = "top 0.3s ease";
+  Chrome.style.top = "100%";
+  ChromeFlag = 0;
+});
+let chromeclose = document.querySelector(".chromeclose");
+chromeclose.addEventListener("click", () => {
+  Chrome.style.display = "none";
+  taskbarmenu.map((item) => {
+    if (item.class == "chrome") {
+      item.isActive = false;
+    }
+  });
+  menuBar();
+});
+// Chrome search function
+const searchtext = document.getElementById("searchtext");
+const search = document.getElementById("search");
+const browserScreen = document.getElementById("browserScreen");
+const reload = document.getElementById("reload");
+const iframeError = document.getElementById("iframeError");
+const defaulttext = document.getElementById("defaulttext");
+
+reload.addEventListener("click",()=>{
+  searchtext.value = "";
+  browserScreen.src = "";
+  browserScreen.style.display = "none";
+  iframeError.style.display = "none";
+  defaulttext.style.display = "block";
+})
+
+const blockedSites = [
+  "youtube.com",
+  "google.com",
+  "facebook.com",
+  "instagram.com",
+  "duckduckgo.com",
+  "linkedin.com",
+  "W3Schools.com"
+];
+
+function isBlocked(url) {
+  return blockedSites.some((domain) => url.includes(domain));
+}
+
+search.addEventListener("click", () => {
+  let query = searchtext.value.trim();
+  if (!query) return browserScreen.style.display = "none";
+  defaulttext.style.display = "none";
+  browserScreen.style.display = "block";
+  let finalUrl = "";
+
+  if (query.startsWith("http://") || query.startsWith("https://")) {
+    finalUrl = query;
+  } else if (query.includes(".") && !query.includes(" ")) {
+    finalUrl = `https://${query}`;
+  } else {
+    finalUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+  }
+
+  if (isBlocked(finalUrl)) {
+    defaulttext.style.display = "none";
+    browserScreen.style.display = "none";
+    iframeError.style.display = "block";
+    browserScreen.src = "";
+    setTimeout(()=>{
+      window.open(finalUrl, "_blank");
+    },2000)
+  } else {
+    iframeError.style.display = "none";
+    browserScreen.src = finalUrl;
+  }
+});
+// Chrome Drag function
+Chrome.addEventListener("mousedown", (e) => {
+  isDragging = false;
+  isDragging = true;
+  offsetX = e.clientX - Chrome.offsetLeft;
+  offsetY = e.clientY - Chrome.offsetTop;
+});
+Chrome.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  Chrome.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const FileRect = Chrome.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  Chrome.style.top = y + "px";
+  Chrome.style.left = x + "px";
+});
+
+Chrome.addEventListener("mouseup", () => {
+  isDragging = false;
+  Chrome.style.zIndex = "5";
+  Filestab.style.zIndex = "4";
+  Notetab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
+});
+
+
+// Opne app from Screen
+container.addEventListener("dblclick", (e) => {
+  if (e.target.classList.contains("note")) {
+    Notetab.style.display = "flex";
+    Notetab.style.scale = "0";
+    Notetab.style.transformOrigin = "left";
+    Notetab.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      Notetab.style.scale = "1";
+    }, 50);
+    if (taskbarmenu.some((item) => item.class === "note")) return;
+    taskbarmenu.push({
+      src: "./assets/notes.png",
+      class: "note",
+      isActive: true,
+    });
+    menuBar();
+  }
+
+  if (e.target.classList.contains("file")) {
+    Filestab.style.display = "flex";
+    Filestab.style.scale = "0";
+    Filestab.style.transformOrigin = "left";
+    Filestab.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      Filestab.style.scale = "1";
+    }, 50);
+    if (taskbarmenu.some((item) => item.class === "file")) return;
+    taskbarmenu.push({
+      src: "./assets/folder.png",
+      class: "file",
+      isActive: true,
+    });
+    menuBar();
+  }
+  if (e.target.classList.contains("chrome")) {
+    Chrome.style.display = "block";
+    Chrome.style.scale = "0";
+    Chrome.style.transformOrigin = "left";
+    Chrome.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      Chrome.style.scale = "1";
+    }, 50);
+    taskbarmenu.some((item) => {
+      if (item.class === "chrome" && item.isActive === false) {
+        item.isActive = true;
+      }
+    });
+    menuBar();
+  }
+});
+let iconFlag = 0;
+let filesiconFlag = 0;
+let previewFalg = 0;
+// Taskbar options
+allItems.addEventListener("click", (e) => {
+  if (e.target.classList.contains("note") && iconFlag === 0) {
+    Notetab.style.scale = "1";
+    Notetab.style.top = "50%";
+    Notetab.style.transition = "top 0.3s ease";
+    Filestab.style.zIndex = "9";
+    previewer.style.zIndex = "10";
+    Chrome.style.zIndex = "11";
+    Notetab.style.zIndex = "99";
+    iconFlag = 1;
+  } else if (e.target.classList.contains("note") && iconFlag === 1) {
+    Notetab.style.scale = "0.2";
+    Notetab.style.top = "100%";
+    Notetab.style.zIndex = "9";
+    iconFlag = 0;
+  } else if (e.target.classList.contains("file") && filesiconFlag === 0) {
+    Filestab.style.scale = "1";
+    Filestab.style.top = "50%";
+    Filestab.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    previewer.style.zIndex = "10";
+    Chrome.style.zIndex = "11";
+    Filestab.style.zIndex = "99";
+    filesiconFlag = 1;
+  } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
+    Filestab.style.scale = "0.2";
+    Filestab.style.top = "100%";
+    Filestab.style.zIndex = "9";
+    filesiconFlag = 0;
+  } else if (e.target.classList.contains("photo") && previewFalg === 0) {
+    previewer.style.scale = "1";
+    previewer.style.top = "50%";
+    previewer.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    Chrome.style.zIndex = "11";
+    previewer.style.zIndex = "99";
+    previewFalg = 1;
+  } else if (e.target.classList.contains("photo") && previewFalg === 1) {
+    previewer.style.scale = "0.2";
+    previewer.style.top = "100%";
+    previewer.style.zIndex = "9";
+    previewFalg = 0;
+  } else if (e.target.classList.contains("chrome") && ChromeFlag === 0) {
+    Chrome.style.scale = "1";
+    Chrome.style.top = "50%";
+    Chrome.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    previewer.style.zIndex = "11";
+    Chrome.style.zIndex = "99";
+    ChromeFlag = 1;
+  } else if (e.target.classList.contains("chrome") && ChromeFlag === 1) {
+    Chrome.style.scale = "0.2";
+    Chrome.style.top = "100%";
+    Chrome.style.zIndex = "9";
+    ChromeFlag = 0;
+  }
+});
