@@ -295,7 +295,8 @@ Notetab.addEventListener("mousemove", (e) => {
 });
 Notetab.addEventListener("mouseup", () => {
   isDragging = false;
-  Notetab.style.zIndex = "5";
+  Notetab.style.zIndex = "6";
+  terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
   previewer.style.zIndex = "2";
@@ -357,7 +358,8 @@ Filestab.addEventListener("mousemove", (e) => {
 
 Filestab.addEventListener("mouseup", () => {
   isDragging = false;
-  Filestab.style.zIndex = "5";
+  Filestab.style.zIndex = "6";
+  terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Notetab.style.zIndex = "3";
   previewer.style.zIndex = "2";
@@ -438,7 +440,8 @@ previewer.addEventListener("mousemove", (e) => {
 });
 previewer.addEventListener("mouseup", () => {
   isDragging = false;
-  previewer.style.zIndex = "5";
+  previewer.style.zIndex = "6";
+  terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
   Notetab.style.zIndex = "2";
@@ -616,10 +619,6 @@ imageScreen.addEventListener("dblclick",(e)=>{
   } 
 })
 
-// main.addEventListener("contextmenu", function (e) {
-//   e.preventDefault();
-//   console.log("You right-clicked!");
-// });
 // Chrome tab and it's funtioc like minimize and maximize
 let Chrome = document.querySelector("#chrome");
 let ChromeFlag = 0;
@@ -739,12 +738,131 @@ Chrome.addEventListener("mousemove", (e) => {
 
 Chrome.addEventListener("mouseup", () => {
   isDragging = false;
-  Chrome.style.zIndex = "5";
+  Chrome.style.zIndex = "6";
+  terminal.style.zIndex = "5";
   Filestab.style.zIndex = "4";
   Notetab.style.zIndex = "3";
   previewer.style.zIndex = "2";
 });
 
+// terminal tab and it's all functions
+let terminal = document.getElementById("terminalTab")
+const terminalbody = document.querySelector(".terminalbody");
+const commands = {
+  help: "Available commands: help, clear, date, whoami, echo [text]",
+  date: new Date().toString(),
+  whoami: "suvam (Browser OS User)",
+};
+
+document.addEventListener("keydown", (e) => {
+  const input = document.querySelector(".cmd-input");
+  if (!input) return;
+
+  if (e.key === "Enter") {
+    const command = input.value.trim();
+    const inputLine = input.parentElement;
+    inputLine.innerHTML = `<span class="prompt">@SuvamOS < = ></span> ${command}`;
+
+    handleCommand(command);
+    terminalbody.scrollTop = terminalbody.scrollHeight;
+  }
+});
+
+function handleCommand(cmd) {
+  if (cmd === "clear") {
+    terminalbody.innerHTML = `<div class="line">Welcome to SuvamOS Terminal. Type <code>help</code>.</div>`;
+    addNewInputLine();
+    return;
+  }
+
+  let output = "";
+
+  if (cmd.startsWith("echo ")) {
+    output = cmd.slice(5);
+  } else {
+    output = commands[cmd] || `Command not found: ${cmd}`;
+  }
+
+  const outputLine = document.createElement("div");
+  outputLine.classList.add("line");
+  outputLine.textContent = output;
+  terminalbody.appendChild(outputLine);
+
+  addNewInputLine();
+}
+
+function addNewInputLine() {
+  const newInputLine = document.createElement("div");
+  newInputLine.classList.add("line");
+  newInputLine.innerHTML = `<span class="prompt">@SuvamOS < = ></span> <input class="cmd-input" autofocus />`;
+  terminalbody.appendChild(newInputLine);
+  document.querySelector(".cmd-input").focus();
+}
+let terminalFlag = 0;
+let TerminalFlag = 0;
+let terminalmaximize = document.querySelector(".terminalmaximize");
+terminalmaximize.addEventListener("click", () => {
+  if (terminalFlag === 0) {
+    terminal.style.width = "100vw";
+    terminal.style.height = "100vh";
+    terminal.style.transition = "width 0.4s ease, height 0.4s ease";
+    terminal.style.top = "50%";
+    terminal.style.left = "50%";
+    terminalFlag = 1;
+  } else {
+    terminal.style.width = "50vw";
+    terminal.style.height = "50vh";
+    terminal.style.transition = "width 0.4s ease, height 0.4s ease";
+    terminal.style.top = "50%";
+    terminal.style.left = "50%";
+    chromeFlag = 0;
+  }
+});
+let terminalminimize = document.querySelector(".terminalminimize");
+terminalminimize.addEventListener("click", () => {
+  terminal.style.scale = "0.2";
+  terminal.style.transition = "top 0.3s ease";
+  terminal.style.top = "100%";
+  TerminalFlag = 0;
+});
+let terminalclose = document.querySelector(".terminalclose");
+terminalclose.addEventListener("click", () => {
+  terminal.style.display = "none";
+  taskbarmenu.map((item) => {
+    if (item.class == "terminal") {
+      item.isActive = false;
+    }
+  });
+  menuBar();
+});
+
+terminal.addEventListener("mousedown", (e) => {
+  isDragging = false;
+  isDragging = true;
+  offsetX = e.clientX - terminal.offsetLeft;
+  offsetY = e.clientY - terminal.offsetTop;
+});
+terminal.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  terminal.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const FileRect = Chrome.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  terminal.style.top = y + "px";
+  terminal.style.left = x + "px";
+});
+
+terminal.addEventListener("mouseup", () => {
+  isDragging = false;
+  terminal.style.zIndex = "6";
+  Chrome.style.zIndex = "5";
+  Filestab.style.zIndex = "4";
+  Notetab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
+});
 
 // Opne app from Screen
 container.addEventListener("dblclick", (e) => {
@@ -764,7 +882,6 @@ container.addEventListener("dblclick", (e) => {
     });
     menuBar();
   }
-
   if (e.target.classList.contains("file")) {
     Filestab.style.display = "flex";
     Filestab.style.scale = "0";
@@ -796,6 +913,21 @@ container.addEventListener("dblclick", (e) => {
     });
     menuBar();
   }
+  if (e.target.classList.contains("terminal")) {
+    terminal.style.display = "block";
+    terminal.style.scale = "0";
+    terminal.style.transformOrigin = "left";
+    terminal.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      terminal.style.scale = "1";
+    }, 50);
+    taskbarmenu.some((item) => {
+      if (item.class === "terminal" && item.isActive === false) {
+        item.isActive = true;
+      }
+    });
+    menuBar();
+  }
 });
 let iconFlag = 0;
 let filesiconFlag = 0;
@@ -809,6 +941,7 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "9";
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
+    terminal.style.zIndex = "12";
     Notetab.style.zIndex = "99";
     iconFlag = 1;
   } else if (e.target.classList.contains("note") && iconFlag === 1) {
@@ -823,6 +956,7 @@ allItems.addEventListener("click", (e) => {
     Notetab.style.zIndex = "9";
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
+    terminal.style.zIndex = "12";
     Filestab.style.zIndex = "99";
     filesiconFlag = 1;
   } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
@@ -837,6 +971,7 @@ allItems.addEventListener("click", (e) => {
     Notetab.style.zIndex = "9";
     Filestab.style.zIndex = "10";
     Chrome.style.zIndex = "11";
+    terminal.style.zIndex = "12";
     previewer.style.zIndex = "99";
     previewFalg = 1;
   } else if (e.target.classList.contains("photo") && previewFalg === 1) {
@@ -851,6 +986,7 @@ allItems.addEventListener("click", (e) => {
     Notetab.style.zIndex = "9";
     Filestab.style.zIndex = "10";
     previewer.style.zIndex = "11";
+    terminal.style.zIndex = "12";
     Chrome.style.zIndex = "99";
     ChromeFlag = 1;
   } else if (e.target.classList.contains("chrome") && ChromeFlag === 1) {
@@ -858,5 +994,20 @@ allItems.addEventListener("click", (e) => {
     Chrome.style.top = "100%";
     Chrome.style.zIndex = "9";
     ChromeFlag = 0;
+  } else if (e.target.classList.contains("terminal") && TerminalFlag === 0) {
+    terminal.style.scale = "1";
+    terminal.style.top = "50%";
+    terminal.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    previewer.style.zIndex = "11";
+    Chrome.style.zIndex = "12";
+    terminal.style.zIndex = "99";
+    TerminalFlag = 1;
+  } else if (e.target.classList.contains("terminal") && TerminalFlag === 1) {
+    terminal.style.scale = "0.2";
+    terminal.style.top = "100%";
+    terminal.style.zIndex = "9";
+    TerminalFlag = 0;
   }
 });
