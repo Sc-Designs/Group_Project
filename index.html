@@ -53,18 +53,6 @@
                             </div>
                         </div>
                         <div class="homeScreen">
-                                <div class="icon">
-                                    <img src="./assets/folder.png" alt="">
-                                    <small>New File</small>
-                                </div>
-                                <div class="icon">
-                                    <img src="./assets/folder.png" alt="">
-                                    <small>New File</small>
-                                </div>
-                                <div class="icon">
-                                    <img src="./assets/folder.png" alt="">
-                                    <small>New File</small>
-                                </div>
                         </div>
                         <div class="imageScreen">
                                 <abbr title="Click for open or double click for wallpaper">
@@ -155,9 +143,54 @@
                 <div class="terminalbody">
                     <div class="line">Welcome to SuvamOS Terminal. Type <code>help</code>.</div>
                     <div class="line">
-                        <span class="prompt">@SuvamOS < = ></span>
+                        <span class="prompt">ॐ suvamOS < = ></span>
                         <input class="cmd-input" autofocus />
                     </div>
+                </div>
+            </section>
+            <section id="rightClickMenu">
+                <h1><i class="ri-eye-line px-2"></i> View</h1>
+                <h1><i class="ri-sort-asc px-2"></i> Sort by</h1>
+                <h1><i class="ri-reset-right-line px-2"></i> Refresh</h1>
+                <div class="partition"></div>
+                <h1><i class="ri-arrow-go-back-line px-2"></i> Undo delete</h1>
+                <div>
+                    <h1 class="new-text"><i class="ri-add-circle-line px-2"></i> New</h1>
+                </div>
+                <div class="partition"></div>
+                <h1><i class="ri-computer-line px-2"></i> Display settings</h1>
+                <h1><i class="ri-pencil-line px-2"></i> Personalize</h1>
+                <div class="partition"></div>
+                <h1><i class="ri-terminal-box-fill px-2"></i> Open in terminal</h1>
+                <h1><i class="ri-more-line px-2"></i> Show more option</h1>
+                <section class="new-section">
+                    <p id="folder-option">📁 Folder</p>
+                    <p id="new">↗️ Shortcut </p>
+                    <p>📃 Microsoft Access Database</p>
+                    <p>🗺️ Bitmap image</p>
+                    <p>📘 Microsoft Word Document</p>
+                    <p>📙 Microsoft Powerpoint </p>
+                    <p>📗 Mcrosoft Publisher Document</p>
+                    <p>🗨️ Text Document</p>
+                    <p>📄 Microsoft Excel Worksheet</p>
+                    <p>📂 Compresses (Zipped) Folder</p>
+                </section>
+            </section>
+            <section id="camera">
+                <div class="top">
+                    <h4>Camera</h4>
+                    <div class="menu">
+                        <div class="cameraminimize">_</div>
+                        <div class="cameramaximize">▢</div>
+                        <div class="cameraclose close">×</div>
+                    </div>
+                </div>
+                <div class="camerabody">
+                    <video id="cameraFeed" autoplay playsinline></video>
+                    <abbr title="Take Photo">
+                        <div class="camerabutton"><i class="ri-camera-lens-line"></i></div>
+                    </abbr>
+                    <canvas id="photoCanvas" style="display: none;"></canvas>
                 </div>
             </section>
         </section>

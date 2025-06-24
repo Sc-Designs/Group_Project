@@ -3,7 +3,7 @@ let time = document.querySelector(".time");
 let FullDate = document.querySelector(".date");
 let settings = document.querySelector(".settings");
 let date = new Date();
-let Day = date.getDate().toString().padStart(2,"0");
+let Day = (date.getDate()+1).toString().padStart(2,"0");
 let Month = date.getMonth().toString().padStart(2,"0");
 let Year = date.getFullYear().toString().padStart(2,"0");
 let container = document.querySelector("#screen");
@@ -16,6 +16,15 @@ let allItems = document.querySelector(".allitems");
 let fileTabScreen = document.querySelector(".fileTabScreen");
 let flag = 0;
 let isDragging = false;
+let iconHeight = 90;
+let gapY = 2;
+let maxContainerHeight = container.clientHeight;
+let column = 0;
+let row = 0;
+let Top = 0;
+let left = 0;
+const renderedSet = new Set();
+const ImageSet = new Set();
 let bg = localStorage.getItem("backGround");
 main.style.backgroundImage = bg !== null ? 
   `url('${bg}')` :
@@ -68,6 +77,11 @@ let DesktopApplication = [
     src: "./assets/terminal.png",
     name: "Terminal",
     class: "terminal",
+  },
+  {
+    src: "./assets/camera.png",
+    name: "Camera",
+    class: "camera",
   },
 ];
 let taskbarIcon = [
@@ -149,12 +163,35 @@ taskbarIcon.forEach((item)=>{
 FullDate.textContent = `${Day}-${Month}-${Year}`;
 
 // Print DesktopApp
-DesktopApplication.forEach((item,i)=>{
-    container.innerHTML += `<div class="software ${item.class}" style="top:${Math.floor((i+0.2)*10)}%; left:0.5%">
-                <img src="${item.src}" alt="">
-                <h6>${item.name}</h6>
-            </div>` 
-})
+const PrintDesktopApplication = () => {
+  DesktopApplication.forEach((item) => {
+    if (renderedSet.has(item.name)) return;
+
+    let top = row * (iconHeight + gapY);
+    let left = column * 6 + 0.5;
+
+    if (top + iconHeight > (container.clientHeight - 70)) {
+      column++;
+      row = 0;
+      top = 0;
+      left = column * 6 + 0.5;
+    }
+
+    const el = document.createElement("div");
+    el.className = `software ${item.class}`;
+    el.style.position = "absolute";
+    el.style.top = `${top + 10}px`;
+    el.style.left = `${left}vw`;
+    el.innerHTML = `
+      <img src="${item.src}" alt="">
+      <input class="iconText" type="text" value="${item.name}" readOnly />
+    `;
+    container.appendChild(el);
+    renderedSet.add(item.name);
+    row++;
+  });
+};
+PrintDesktopApplication()
 
 // All screen app Drag function
 let box = document.querySelectorAll(".software");
@@ -275,13 +312,14 @@ noteclose.addEventListener("click", ()=>{
 menuBar()
 
 // NoteTab Drag function
-Notetab.addEventListener("mousedown", (e) => {
+let NoteTabTop = document.querySelector("#Notetab .top");
+NoteTabTop.addEventListener("mousedown", (e) => {
   isDragging = false;
   isDragging = true;
   offsetX = e.clientX - Notetab.offsetLeft;
   offsetY = e.clientY - Notetab.offsetTop;
 });
-Notetab.addEventListener("mousemove", (e) => {
+NoteTabTop.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   Notetab.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
@@ -289,13 +327,14 @@ Notetab.addEventListener("mousemove", (e) => {
 
   let x = e.clientX - containerRect.left - offsetX;
   let y = e.clientY - containerRect.top - offsetY;
-  
+
   Notetab.style.top = y + "px";
   Notetab.style.left = x + "px";
 });
-Notetab.addEventListener("mouseup", () => {
+NoteTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Notetab.style.zIndex = "6";
+  Notetab.style.zIndex = "7";
+  camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
@@ -337,13 +376,14 @@ filesclose.addEventListener("click", () => {
 menuBar()
 
 // FileTab Drag function
-Filestab.addEventListener("mousedown", (e) => {
+let FileTabTop = document.querySelector("#Filestab .top");
+FileTabTop.addEventListener("mousedown", (e) => {
   isDragging = false;
   isDragging = true;
   offsetX = e.clientX - Filestab.offsetLeft;
   offsetY = e.clientY - Filestab.offsetTop;
 });
-Filestab.addEventListener("mousemove", (e) => {
+FileTabTop.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   Filestab.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
@@ -356,20 +396,31 @@ Filestab.addEventListener("mousemove", (e) => {
   Filestab.style.left = x + "px";
 });
 
-Filestab.addEventListener("mouseup", () => {
+FileTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Filestab.style.zIndex = "6";
+  Filestab.style.zIndex = "7";
+  camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Notetab.style.zIndex = "3";
   previewer.style.zIndex = "2";
 });
-
+let homeScreenFolderArr = [];
 // file viewer and functions for Child
 let fileNav = document.querySelector(".fileNav");
 let desktopScreen = document.querySelector(".desktopScreen");
 let homeScreen = document.querySelector(".homeScreen");
 let imageScreen = document.querySelector(".imageScreen");
+let putFile = () => {
+  homeScreen.innerHTML = "";
+homeScreenFolderArr.map(item=>{
+  homeScreen.innerHTML += `<div class="icon">
+                                    <img src="${item.icon}" alt="">
+                                    <small>${item.name}</small>
+                                </div>`;
+})
+}
+putFile();
 fileNav.addEventListener("click",(e)=>{
   if(e.target.className === 'desktop'){
     desktopScreen.style.display = "block";
@@ -383,8 +434,24 @@ fileNav.addEventListener("click",(e)=>{
     imageScreen.style.display = "grid";
     homeScreen.style.display = "none";
     desktopScreen.style.display = "none";
+    loadImagesInOS();
   }
 })
+function loadImagesInOS() {
+  const savedImages = JSON.parse(localStorage.getItem("savedImages")) || [];
+
+  savedImages.forEach((img,i) => {
+    if (ImageSet.has(img.id)) return;
+    let image = `<abbr title="Click for open or double click for wallpaper">
+                                    <div class="icon">
+                                        <img src="${img.data}" alt="">
+                                        <small>Photo ${i}</small>
+                                    </div>
+                                </abbr>`;
+    imageScreen.innerHTML += image;
+    ImageSet.add(img.id);
+  });
+}
 
 // Previwer Tab and it's functions like minimize, maximize, close
 let previewer = document.querySelector("#previewer");
@@ -420,13 +487,14 @@ previewerclose.addEventListener("click", () => {
 });
 
 // Previwer Drag functions
-previewer.addEventListener("mousedown", (e) => {
+let previewerTabTop = document.querySelector("#previewer .top");
+previewerTabTop.addEventListener("mousedown", (e) => {
   isDragging = false;
   isDragging = true;
   offsetX = e.clientX - previewer.offsetLeft;
   offsetY = e.clientY - previewer.offsetTop;
 });
-previewer.addEventListener("mousemove", (e) => {
+previewerTabTop.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   previewer.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
@@ -438,9 +506,10 @@ previewer.addEventListener("mousemove", (e) => {
   previewer.style.top = y + "px";
   previewer.style.left = x + "px";
 });
-previewer.addEventListener("mouseup", () => {
+previewerTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  previewer.style.zIndex = "6";
+  previewer.style.zIndex = "7";
+  camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
@@ -449,29 +518,9 @@ previewer.addEventListener("mouseup", () => {
 
 // Screen wallpaper change
 imageScreen.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("1bg")){
+  if(e.target.src !== undefined){
     localStorage.removeItem("backGround");
     localStorage.setItem("backGround", e.target.src)
-    main.style.backgroundImage = `url("${e.target.src}")`
-  }
-  else if(e.target.classList.contains("2bg")){
-    localStorage.removeItem("backGround");
-    localStorage.setItem("backGround", e.target.src);
-    main.style.backgroundImage = `url("${e.target.src}")`
-  }
-  else if(e.target.classList.contains("3bg")){
-    localStorage.removeItem("backGround");
-    localStorage.setItem("backGround", e.target.src);
-    main.style.backgroundImage = `url("${e.target.src}")`
-  }
-  else if(e.target.classList.contains("4bg")){
-    localStorage.removeItem("backGround");
-    localStorage.setItem("backGround", e.target.src);
-    main.style.backgroundImage = `url("${e.target.src}")`
-  }
-  else if(e.target.classList.contains("5bg")){
-    localStorage.removeItem("backGround");
-    localStorage.setItem("backGround", e.target.src);
     main.style.backgroundImage = `url("${e.target.src}")`
   }
 })
@@ -479,14 +528,14 @@ imageScreen.addEventListener("click",(e)=>{
 // Pic viewer Tab
 let previewerScreen = document.querySelector(".previewerScreen");
 imageScreen.addEventListener("dblclick",(e)=>{
-  if(e.target.classList.contains("1bg")){
+  if(e.target.src !== undefined){
     previewer.style.display = "block";
     previewerScreen.innerHTML = "";
     let image = document.createElement("img");
     image.src = e.target.src;
     image.style.height = "100%";
     image.style.width = "100%";
-    image.style.objectFit = "cover";
+    image.style.objectFit = "contain";
     previewerScreen.appendChild(image)
     previewer.style.zIndex = "99";
     if (taskbarmenu.some((item) => item.class === "photo")) return;
@@ -497,126 +546,6 @@ imageScreen.addEventListener("dblclick",(e)=>{
     });
     menuBar()
   }
-  else if(e.target.classList.contains("2bg")){
-    previewer.style.display = "block";
-    previewer.style.scale = "0";
-    previewer.style.transformOrigin = "left";
-    previewer.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      previewer.style.scale = "1";
-    }, 50);
-    previewerScreen.innerHTML = "";
-    let image = document.createElement("img");
-    image.src = e.target.src;
-    image.style.height = "100%";
-    image.style.width = "100%";
-    image.style.objectFit = "cover";
-    previewerScreen.appendChild(image)
-    previewer.style.zIndex = "99";
-    if (taskbarmenu.some((item) => item.class === "photo")) return;
-    taskbarmenu.push({
-      src: "./assets/photo.png",
-      class: "photo",
-      isActive: true,
-    });
-    menuBar();
-  }
-  else if(e.target.classList.contains("3bg")){
-    previewer.style.display = "block";
-    previewer.style.scale = "0";
-    previewer.style.transformOrigin = "left";
-    previewer.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      previewer.style.scale = "1";
-    }, 50);
-    previewerScreen.innerHTML = "";
-    let image = document.createElement("img");
-    image.src = e.target.src;
-    image.style.height = "100%";
-    image.style.width = "100%";
-    image.style.objectFit = "cover";
-    previewerScreen.appendChild(image)
-    previewer.style.zIndex = "99";
-    if (taskbarmenu.some((item) => item.class === "photo")) return;
-    taskbarmenu.push({
-      src: "./assets/photo.png",
-      class: "photo",
-      isActive: true,
-    });
-    menuBar();
-  }
-  else if(e.target.classList.contains("4bg")){
-    previewer.style.display = "block";
-    previewer.style.scale = "0";
-    previewer.style.transformOrigin = "left";
-    previewer.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      previewer.style.scale = "1";
-    }, 50);
-    previewerScreen.innerHTML = "";
-    let image = document.createElement("img");
-    image.src = e.target.src;
-    image.style.height = "100%";
-    image.style.width = "100%";
-    image.style.objectFit = "cover";
-    previewerScreen.appendChild(image);
-    previewer.style.zIndex = "99";
-    if (taskbarmenu.some((item) => item.class === "photo")) return;
-    taskbarmenu.push({
-      src: "./assets/photo.png",
-      class: "photo",
-      isActive: true,
-    });
-    menuBar();
-  } 
-  else if(e.target.classList.contains("5bg")){
-    previewer.style.display = "block";
-    previewer.style.scale = "0";
-    previewer.style.transformOrigin = "left";
-    previewer.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      previewer.style.scale = "1";
-    }, 50);
-    previewerScreen.innerHTML = "";
-    let image = document.createElement("img");
-    image.src = e.target.src;
-    image.style.height = "100%";
-    image.style.width = "100%";
-    image.style.objectFit = "cover";
-    previewerScreen.appendChild(image);
-    previewer.style.zIndex = "99";
-    if (taskbarmenu.some((item) => item.class === "photo")) return;
-    taskbarmenu.push({
-      src: "./assets/photo.png",
-      class: "photo",
-      isActive: true,
-    });
-    menuBar();
-  } 
-  else if(e.target.classList.contains("logo")){
-    previewer.style.display = "block";
-    previewer.style.scale = "0";
-    previewer.style.transformOrigin = "left";
-    previewer.style.transition = "scale 0.4s ease";
-    setTimeout(() => {
-      previewer.style.scale = "1";
-    }, 50);
-    previewerScreen.innerHTML = "";
-    let image = document.createElement("img");
-    image.src = e.target.src;
-    image.style.height = "100%";
-    image.style.width = "100%";
-    image.style.objectFit = "cover";
-    previewerScreen.appendChild(image)
-    previewer.style.zIndex = "99";
-    if (taskbarmenu.some((item) => item.class === "photo")) return;
-    taskbarmenu.push({
-      src: "./assets/photo.png",
-      class: "photo",
-      isActive: true,
-    });
-    menuBar();
-  } 
 })
 
 // Chrome tab and it's funtioc like minimize and maximize
@@ -717,13 +646,14 @@ search.addEventListener("click", () => {
   }
 });
 // Chrome Drag function
-Chrome.addEventListener("mousedown", (e) => {
+let chromeTabTop = document.querySelector("#chrome .top");
+chromeTabTop.addEventListener("mousedown", (e) => {
   isDragging = false;
   isDragging = true;
   offsetX = e.clientX - Chrome.offsetLeft;
   offsetY = e.clientY - Chrome.offsetTop;
 });
-Chrome.addEventListener("mousemove", (e) => {
+chromeTabTop.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   Chrome.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
@@ -735,10 +665,10 @@ Chrome.addEventListener("mousemove", (e) => {
   Chrome.style.top = y + "px";
   Chrome.style.left = x + "px";
 });
-
-Chrome.addEventListener("mouseup", () => {
+chromeTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Chrome.style.zIndex = "6";
+  Chrome.style.zIndex = "7";
+  camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Filestab.style.zIndex = "4";
   Notetab.style.zIndex = "3";
@@ -761,7 +691,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const command = input.value.trim();
     const inputLine = input.parentElement;
-    inputLine.innerHTML = `<span class="prompt">@SuvamOS < = ></span> ${command}`;
+    inputLine.innerHTML = `<span class="prompt">ॐ suvamOS < = ></span> ${command}`;
 
     handleCommand(command);
     terminalbody.scrollTop = terminalbody.scrollHeight;
@@ -794,7 +724,7 @@ function handleCommand(cmd) {
 function addNewInputLine() {
   const newInputLine = document.createElement("div");
   newInputLine.classList.add("line");
-  newInputLine.innerHTML = `<span class="prompt">@SuvamOS < = ></span> <input class="cmd-input" autofocus />`;
+  newInputLine.innerHTML = `<span class="prompt">ॐ suvamOS < = ></span> <input class="cmd-input" autofocus />`;
   terminalbody.appendChild(newInputLine);
   document.querySelector(".cmd-input").focus();
 }
@@ -815,7 +745,7 @@ terminalmaximize.addEventListener("click", () => {
     terminal.style.transition = "width 0.4s ease, height 0.4s ease";
     terminal.style.top = "50%";
     terminal.style.left = "50%";
-    chromeFlag = 0;
+    terminalFlag = 0;
   }
 });
 let terminalminimize = document.querySelector(".terminalminimize");
@@ -835,14 +765,15 @@ terminalclose.addEventListener("click", () => {
   });
   menuBar();
 });
-
-terminal.addEventListener("mousedown", (e) => {
+// terminal drag function
+let terminalTabTop = document.querySelector("#terminalTab .top");
+terminalTabTop.addEventListener("mousedown", (e) => {
   isDragging = false;
   isDragging = true;
   offsetX = e.clientX - terminal.offsetLeft;
   offsetY = e.clientY - terminal.offsetTop;
 });
-terminal.addEventListener("mousemove", (e) => {
+terminalTabTop.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   terminal.style.zIndex = "999";
   const containerRect = container.getBoundingClientRect();
@@ -855,15 +786,152 @@ terminal.addEventListener("mousemove", (e) => {
   terminal.style.left = x + "px";
 });
 
-terminal.addEventListener("mouseup", () => {
+terminalTabTop.addEventListener("mouseup", () => {
   isDragging = false;
+  terminal.style.zIndex = "7";
+  camera.style.zIndex = "6";
+  Chrome.style.zIndex = "5";
+  Filestab.style.zIndex = "4";
+  Notetab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
+});
+let rightClickMenu = document.getElementById("rightClickMenu");
+document.addEventListener("contextmenu", (e)=>{
+  e.preventDefault();
+  rightClickMenu.style.display = "flex";
+  rightClickMenu.style.top = e.clientY + "px";
+  rightClickMenu.style.left = e.clientX + "px";
+})
+
+let newText = document.querySelector(".new-text");
+let newSection = document.querySelector(".new-section");
+let folderOption = document.getElementById("folder-option");
+let folderCounter = 0;
+newText.addEventListener("mouseenter",()=>{
+  newSection.style.display = "flex";
+})
+newSection.addEventListener("mouseleave", () => {
+  newSection.style.display = "none";
+});
+folderOption.addEventListener("click",()=>{
+  DesktopApplication.push({
+    src: "./assets/folder.png",
+    name: `Folder${folderCounter}`,
+    class: `folder${folderCounter}`,
+  });
+  homeScreenFolderArr.push({
+    icon: "./assets/folder.png",
+    name: `Folder${folderCounter}`,
+  });
+  PrintDesktopApplication();
+  putFile()
+  newSection.style.display = "none"
+  rightClickMenu.style.display = "none";
+  folderCounter++;
+})
+
+container.addEventListener("click",()=>{
+  rightClickMenu.style.display = "none";
+})
+
+let camera = document.querySelector("#camera");
+let cameraFeed = document.querySelector("#cameraFeed")
+let cameramaximize = document.querySelector(".cameramaximize");
+let cameraFlag = 0;
+cameramaximize.addEventListener("click", () => {
+  if (cameraFlag === 0) {
+    camera.style.width = "100vw";
+    camera.style.height = "100vh";
+    camera.style.transition = "width 0.4s ease, height 0.4s ease";
+    camera.style.top = "50%";
+    camera.style.left = "50%";
+    cameraFlag = 1;
+  } else {
+    camera.style.width = "50vw";
+    camera.style.height = "50vh";
+    camera.style.transition = "width 0.4s ease, height 0.4s ease";
+    camera.style.top = "50%";
+    camera.style.left = "50%";
+    cameraFlag = 0;
+  }
+});
+let cameraminimize = document.querySelector(".cameraminimize");
+cameraminimize.addEventListener("click", () => {
+  camera.style.scale = "0.2";
+  camera.style.transition = "top 0.3s ease";
+  camera.style.top = "100%";
+  cameraFlag = 0;
+});
+let cameraclose = document.querySelector(".cameraclose");
+cameraclose.addEventListener("click", () => {
+  camera.style.display = "none";
+  let stream = cameraFeed.srcObject;
+  if (stream) {
+    let tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+  }
+  cameraFeed.srcObject = null;
+  taskbarmenu = taskbarmenu.filter((item) => item.class !== "camera");
+  menuBar();
+});
+let cameraTabTop = document.querySelector("#camera .top");
+cameraTabTop.addEventListener("mousedown", (e) => {
+  isDragging = false;
+  isDragging = true;
+  offsetX = e.clientX - camera.offsetLeft;
+  offsetY = e.clientY - camera.offsetTop;
+});
+cameraTabTop.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  camera.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const cameraRect = camera.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  camera.style.top = y + "px";
+  camera.style.left = x + "px";
+});
+
+cameraTabTop.addEventListener("mouseup", () => {
+  isDragging = false;
+  camera.style.zIndex = "7";
   terminal.style.zIndex = "6";
   Chrome.style.zIndex = "5";
   Filestab.style.zIndex = "4";
   Notetab.style.zIndex = "3";
   previewer.style.zIndex = "2";
 });
+let camerabutton = document.querySelector(".camerabutton");
+camerabutton.addEventListener("click",()=>{
+  cameraFeed = document.getElementById("cameraFeed");
+  const canvas = document.getElementById("photoCanvas");
 
+  canvas.width = cameraFeed.videoWidth;
+  canvas.height = cameraFeed.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+
+  // Flip correction (if mirrored)
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+
+  const imageData = canvas.toDataURL("image/png");
+
+  // Save to localStorage
+  let savedImages = JSON.parse(localStorage.getItem("savedImages")) || [];
+  savedImages.push({
+    id: Date.now(),
+    data: imageData,
+  });
+  localStorage.setItem("savedImages", JSON.stringify(savedImages));
+
+  alert("📸 Photo saved to OS Files/Image section!");
+  loadImagesInOS();
+})
+loadImagesInOS();
 // Opne app from Screen
 container.addEventListener("dblclick", (e) => {
   if (e.target.classList.contains("note")) {
@@ -928,6 +996,37 @@ container.addEventListener("dblclick", (e) => {
     });
     menuBar();
   }
+  if (e.target.classList.contains("camera")) {
+    camera.style.display = "block";
+    camera.style.scale = "0";
+    camera.style.transformOrigin = "left";
+    camera.style.transition = "scale 0.4s ease";
+    setTimeout(() => {
+      camera.style.scale = "1";
+    }, 50);
+    menuBar();
+
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        cameraFeed.srcObject = stream;
+      })
+      .catch((err) => {
+        alert("Camera access denied or not found.");
+        console.error(err);
+      });
+      if (taskbarmenu.some((item) => item.class === "camera")) return;
+      taskbarmenu.push({
+        src: "./assets/camera.png",
+        class: "camera",
+        isActive: true,
+      });
+      menuBar();
+  }
+  else {
+    rightClickMenu.style.display = "none";
+    rightFlag = 0;
+  }
 });
 let iconFlag = 0;
 let filesiconFlag = 0;
@@ -942,6 +1041,7 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
+    camera.style.zIndex = "33";
     Notetab.style.zIndex = "99";
     iconFlag = 1;
   } else if (e.target.classList.contains("note") && iconFlag === 1) {
@@ -957,6 +1057,7 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
+    camera.style.zIndex = "33";
     Filestab.style.zIndex = "99";
     filesiconFlag = 1;
   } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
@@ -972,6 +1073,7 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
+    camera.style.zIndex = "33";
     previewer.style.zIndex = "99";
     previewFalg = 1;
   } else if (e.target.classList.contains("photo") && previewFalg === 1) {
@@ -987,6 +1089,7 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "10";
     previewer.style.zIndex = "11";
     terminal.style.zIndex = "12";
+    camera.style.zIndex = "33";
     Chrome.style.zIndex = "99";
     ChromeFlag = 1;
   } else if (e.target.classList.contains("chrome") && ChromeFlag === 1) {
@@ -1002,6 +1105,7 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "10";
     previewer.style.zIndex = "11";
     Chrome.style.zIndex = "12";
+    camera.style.zIndex = "13";
     terminal.style.zIndex = "99";
     TerminalFlag = 1;
   } else if (e.target.classList.contains("terminal") && TerminalFlag === 1) {
@@ -1009,5 +1113,21 @@ allItems.addEventListener("click", (e) => {
     terminal.style.top = "100%";
     terminal.style.zIndex = "9";
     TerminalFlag = 0;
+  } else if (e.target.classList.contains("camera") && cameraFlag === 0) {
+    camera.style.scale = "1";
+    camera.style.top = "50%";
+    camera.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    previewer.style.zIndex = "11";
+    Chrome.style.zIndex = "12";
+    terminal.style.zIndex = "13";
+    camera.style.zIndex = "99";
+    cameraFlag = 1;
+  } else if (e.target.classList.contains("camera") && cameraFlag === 1) {
+    camera.style.scale = "0.2";
+    camera.style.top = "100%";
+    camera.style.zIndex = "9";
+    cameraFlag = 0;
   }
 });
