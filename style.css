@@ -700,6 +700,45 @@ html, body {
   transform-origin: 50% 50%;
   transform: translate(-50%, -50%) rotate(200deg);
 }
+#main #screen #camera .camerabody .filters {
+  position: absolute;
+  height: 30vh;
+  width: 7vw;
+  padding: 0.5% 1%;
+  left: 8%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #292929;
+  border-radius: 10px;
+  overflow: auto;
+}
+#main #screen #camera .camerabody .filters::-webkit-scrollbar {
+  display: none;
+}
+#main #screen #camera .camerabody .filters h1 {
+  font-family: "Roboto";
+  text-align: center;
+  text-transform: uppercase;
+}
+#main #screen #camera .camerabody .filters #cameraFeed {
+  height: 10vh;
+  aspect-ratio: 1/1;
+}
+#main #screen #camera .camerabody .filters .fliter1 {
+  filter: grayscale(1);
+}
+#main #screen #camera .camerabody .filters .fliter2 {
+  filter: hue-rotate(200deg);
+}
+#main #screen #camera .camerabody .filters .fliter3 {
+  filter: invert(1);
+}
+#main #screen #camera .camerabody .filters .fliter4 {
+  filter: saturate(4);
+}
+#main #screen #camera .camerabody .filters .fliter5 {
+  filter: contrast(2);
+}
 #main #allsettingBox {
   background-color: #1a1a1a;
   width: 35vw;

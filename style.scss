@@ -727,6 +727,46 @@
                   }
                }
             }
+            .filters{
+               position: absolute;
+               height: 30vh;
+               width: 7vw;
+               padding: 0.5% 1%;
+               left: 8%;
+               top: 50%;
+               transform: translate(-50%,-50%);
+               background: #292929;
+               border-radius: 10px;
+               overflow: auto;
+
+               &::-webkit-scrollbar{
+                  display: none;
+               }
+               h1{
+                  font-family: "Roboto";
+                  text-align: center;
+                  text-transform: uppercase;
+               }
+               #cameraFeed{
+                  height: 10vh;
+                  aspect-ratio: 1/1;
+               }
+               .fliter1{
+                  filter: grayscale(1);
+               }
+               .fliter2{
+                  filter: hue-rotate(200deg);
+               }
+               .fliter3{
+                  filter:invert(1);
+               }
+               .fliter4{
+                  filter:saturate(4);
+               }
+               .fliter5{
+                  filter:contrast(2);
+               }
+            }
          }
       }
    }

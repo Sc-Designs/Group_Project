@@ -835,9 +835,10 @@ container.addEventListener("click",()=>{
 })
 
 let camera = document.querySelector("#camera");
-let cameraFeed = document.querySelector("#cameraFeed")
+let cameraFeed = document.querySelectorAll("#cameraFeed")
 let cameramaximize = document.querySelector(".cameramaximize");
 let cameraFlag = 0;
+let filters = document.querySelector(".filters");
 cameramaximize.addEventListener("click", () => {
   if (cameraFlag === 0) {
     camera.style.width = "100vw";
@@ -845,6 +846,9 @@ cameramaximize.addEventListener("click", () => {
     camera.style.transition = "width 0.4s ease, height 0.4s ease";
     camera.style.top = "50%";
     camera.style.left = "50%";
+    filters.style.height = "67vh"
+    filters.style.left = "8%"
+    filters.style.overflow = "auto"
     cameraFlag = 1;
   } else {
     camera.style.width = "50vw";
@@ -852,6 +856,9 @@ cameramaximize.addEventListener("click", () => {
     camera.style.transition = "width 0.4s ease, height 0.4s ease";
     camera.style.top = "50%";
     camera.style.left = "50%";
+    filters.style.height = "30vh"
+    filters.style.overflow = "auto"
+    filters.style.left = "8%"
     cameraFlag = 0;
   }
 });
@@ -904,33 +911,54 @@ cameraTabTop.addEventListener("mouseup", () => {
   previewer.style.zIndex = "2";
 });
 let camerabutton = document.querySelector(".camerabutton");
-camerabutton.addEventListener("click",()=>{
-  cameraFeed = document.getElementById("cameraFeed");
-  const canvas = document.getElementById("photoCanvas");
+let camerafeed = document.querySelector(".mainCamera");
+let currentFilter = "";
+filters.addEventListener("click", (e) => {
+  const className = e.target.className;
+  switch (className) {
+    case "fliter1":
+      currentFilter = "grayscale(1)";
+      break;
+    case "fliter2":
+      currentFilter = "hue-rotate(200deg)";
+      break;
+    case "fliter3":
+      currentFilter = "invert(1)";
+      break;
+    case "fliter4":
+      currentFilter = "saturate(4)";
+      break;
+    case "fliter5":
+      currentFilter = "contrast(2)";
+      break;
+    case "normal":
+      currentFilter = "";
+      break;
+  }
+  camerafeed.style.filter = `${currentFilter}`;
+});
 
-  canvas.width = cameraFeed.videoWidth;
-  canvas.height = cameraFeed.videoHeight;
+camerabutton.addEventListener("click", () => {
+  const canvas = document.getElementById("photoCanvas");
+  canvas.width = camerafeed.videoWidth;
+  canvas.height = camerafeed.videoHeight;
 
   const ctx = canvas.getContext("2d");
 
-  // Flip correction (if mirrored)
+  ctx.filter = currentFilter;
   ctx.translate(canvas.width, 0);
   ctx.scale(-1, 1);
-  ctx.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(camerafeed, 0, 0, canvas.width, canvas.height);
 
   const imageData = canvas.toDataURL("image/png");
-
-  // Save to localStorage
   let savedImages = JSON.parse(localStorage.getItem("savedImages")) || [];
-  savedImages.push({
-    id: Date.now(),
-    data: imageData,
-  });
+  savedImages.push({ id: Date.now(), data: imageData });
   localStorage.setItem("savedImages", JSON.stringify(savedImages));
 
   alert("📸 Photo saved to OS Files/Image section!");
   loadImagesInOS();
-})
+});
+
 loadImagesInOS();
 // Opne app from Screen
 container.addEventListener("dblclick", (e) => {
@@ -1009,7 +1037,9 @@ container.addEventListener("dblclick", (e) => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
-        cameraFeed.srcObject = stream;
+        cameraFeed.forEach((item)=>{
+          item.srcObject = stream;
+        })
       })
       .catch((err) => {
         alert("Camera access denied or not found.");
