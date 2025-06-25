@@ -877,7 +877,9 @@ cameraclose.addEventListener("click", () => {
     let tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
   }
-  cameraFeed.srcObject = null;
+  cameraFeed.forEach(item=>{
+    item.srcObject = null;
+  });
   taskbarmenu = taskbarmenu.filter((item) => item.class !== "camera");
   menuBar();
 });
