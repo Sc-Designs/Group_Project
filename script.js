@@ -872,12 +872,12 @@ cameraminimize.addEventListener("click", () => {
 let cameraclose = document.querySelector(".cameraclose");
 cameraclose.addEventListener("click", () => {
   camera.style.display = "none";
-  let stream = cameraFeed.srcObject;
+  cameraFeed.forEach(item=>{
+  const stream = item.srcObject;
   if (stream) {
-    let tracks = stream.getTracks();
+    const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
   }
-  cameraFeed.forEach(item=>{
     item.srcObject = null;
   })
   taskbarmenu = taskbarmenu.filter((item) => item.class !== "camera");
