@@ -26,6 +26,16 @@ html, body {
   overflow: hidden;
   filter: brightness(0.8);
 }
+#main #nightMode {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 99999;
+  background-color: rgba(255, 85, 0, 0.511);
+  filter: brightness(0.5) grayscale(0.3) contrast(1.5);
+  pointer-events: none;
+  display: none;
+}
 #main #screen {
   width: 100%;
   height: 100%;
@@ -81,7 +91,7 @@ html, body {
   z-index: 999;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #Notetab .Notebody {
@@ -138,7 +148,7 @@ html, body {
   z-index: 999;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #Filestab .top {
@@ -317,6 +327,48 @@ html, body {
   font-family: "Roboto";
   text-align: center;
 }
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 2em;
+  row-gap: 2em;
+  height: fit-content;
+  padding: 2%;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection abbr {
+  text-decoration: none;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection abbr .icon {
+  width: 4em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 0.3em;
+  width: 100%;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection abbr .icon:hover {
+  transform: translateY(-5px);
+}
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection abbr video {
+  width: 100%;
+  object-fit: cover;
+  filter: drop-shadow(0px 0px 2px #000);
+  border-radius: 5px;
+}
+#main #screen #Filestab .FileBody .fileTabScreen .videoFileSection abbr small {
+  color: #000;
+  white-space: wrap;
+  font-size: 0.7em;
+  width: 100%;
+  font-family: "Roboto";
+  text-align: center;
+}
 #main #screen #previewer {
   position: absolute;
   top: 50%;
@@ -329,7 +381,7 @@ html, body {
   overflow: hidden;
   display: none;
   z-index: 9;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #previewer .top {
@@ -380,7 +432,7 @@ html, body {
   z-index: 999;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #chrome .Chromebody {
@@ -516,7 +568,7 @@ html, body {
   z-index: 999;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #terminalTab .top {
@@ -579,6 +631,7 @@ html, body {
   justify-content: center;
   row-gap: 0.2rem;
   display: none;
+  text-decoration: none;
 }
 #main #screen #rightClickMenu h1 {
   font-family: "Roboto";
@@ -593,6 +646,9 @@ html, body {
 }
 #main #screen #rightClickMenu h1:hover {
   background: #1a1a1a;
+}
+#main #screen #rightClickMenu h1 abbr {
+  text-decoration: none;
 }
 #main #screen #rightClickMenu .partition {
   background: #818181;
@@ -637,7 +693,7 @@ html, body {
   z-index: 999;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.662745098);
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
   resize: both;
 }
 #main #screen #camera .top {
@@ -684,7 +740,7 @@ html, body {
 }
 #main #screen #camera .camerabody abbr .camerabutton {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 92.5%;
   transform: translate(-50%, -50%);
   font-size: 3rem;
@@ -694,11 +750,40 @@ html, body {
   cursor: pointer;
   transform: translate(-50%, -50%) rotate(0deg);
   transition: background 0.2s ease, transform 0.5s ease;
+  font-size: 2.5rem;
 }
 #main #screen #camera .camerabody abbr .camerabutton:active {
   background: #1c1c1c;
   transform-origin: 50% 50%;
   transform: translate(-50%, -50%) rotate(200deg);
+}
+#main #screen #camera .camerabody abbr {
+  text-decoration: none;
+}
+#main #screen #camera .camerabody abbr .videobutton {
+  position: absolute;
+  top: 70%;
+  left: 92.5%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  background: #494949;
+  border-radius: 30px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: background 0.2s ease, transform 0.5s ease;
+  font-size: 2.5rem;
+}
+#main #screen #camera .camerabody abbr .videobutton:active {
+  background: #1c1c1c;
+  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) rotate(200deg);
+}
+#main #screen #camera .camerabody #recordTimer {
+  position: absolute;
+  left: 50%;
+  top: 90%;
+  font-family: "Roboto";
 }
 #main #screen #camera .camerabody .filters {
   position: absolute;
@@ -725,23 +810,113 @@ html, body {
   aspect-ratio: 1/1;
 }
 #main #screen #camera .camerabody .filters .fliter1 {
-  filter: grayscale(1);
+  filter: blur(1.5px) brightness(1.1) contrast(0.9);
 }
 #main #screen #camera .camerabody .filters .fliter2 {
-  filter: hue-rotate(200deg);
+  filter: sepia(0.3) brightness(1.2) contrast(1.1);
 }
 #main #screen #camera .camerabody .filters .fliter3 {
-  filter: invert(1);
+  filter: sepia(0.8) contrast(1.3);
 }
 #main #screen #camera .camerabody .filters .fliter4 {
-  filter: saturate(4);
+  filter: sepia(0.3) hue-rotate(-15deg) contrast(1.4) saturate(1.8);
 }
 #main #screen #camera .camerabody .filters .fliter5 {
-  filter: contrast(2);
+  filter: brightness(1.2) hue-rotate(330deg) saturate(2);
+}
+#main #screen #personalize {
+  width: 50vw;
+  height: 50vh;
+  background: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 5px;
+  overflow: hidden;
+  resize: both;
+  display: none;
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.4862745098);
+}
+#main #screen #personalize .top {
+  background: #000;
+  width: 100%;
+  padding: 0.5em 0.5em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+}
+#main #screen #personalize .top h4 {
+  font-family: "Roboto";
+  font-weight: 300;
+  font-size: 0.7em;
+  pointer-events: none;
+}
+#main #screen #personalize .top .menu {
+  display: flex;
+  column-gap: 1rem;
+  align-items: center;
+}
+#main #screen #personalize .top .menu div {
+  scale: 1.2;
+  cursor: pointer;
+  padding: 0em 0.5em;
+  transition: all 0.3s ease;
+}
+#main #screen #personalize .top .menu .close:hover {
+  background-color: red;
+}
+#main #screen #personalize .personalizebody {
+  width: 100%;
+  height: calc(100% - 5vh);
+  background: #e3f7fd;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+}
+#main #screen #personalize .personalizebody h1 {
+  font-family: "Roboto";
+  font-weight: 400;
+  color: #000;
+  text-transform: uppercase;
+  border-bottom: 2px solid #000;
+  width: fit-content;
+  border-radius: 10px;
+  padding: 0% 1% 0.2% 1%;
+  margin-bottom: 0.5rem;
+  background: #e3f7fd;
+}
+#main #screen #personalize .personalizebody .wallpapers {
+  width: 100%;
+  padding: 2% 1% 2% 1%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 1.5vw;
+  column-gap: 1.5vw;
+  overflow-y: scroll;
+}
+#main #screen #personalize .personalizebody .wallpapers::-webkit-scrollbar {
+  width: 2px;
+}
+#main #screen #personalize .personalizebody .wallpapers::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 5px;
+}
+#main #screen #personalize .personalizebody .wallpapers img {
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0px 0px 7px 2px rgba(0, 0, 0, 0.6039215686);
+}
+#main #screen #personalize .personalizebody .wallpapers img:hover {
+  transform: translateY(-5px);
 }
 #main #allsettingBox {
   background-color: #1a1a1a;
-  width: 35vw;
+  width: fit-content;
   height: fit-content;
   position: absolute;
   bottom: -60%;
@@ -786,11 +961,18 @@ html, body {
   border-radius: 5px;
 }
 #main #allsettingBox .upperrow {
-  display: flex;
+  display: grid;
   justify-content: space-between;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 0.2rem;
+  column-gap: 0.7rem;
   width: 100%;
+  margin-bottom: 1rem;
 }
-#main #allsettingBox .upperrow .icon-box {
+#main #allsettingBox .upperrow abbr {
+  text-decoration: none;
+}
+#main #allsettingBox .upperrow abbr .icon-box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -798,57 +980,24 @@ html, body {
   row-gap: 0.4em;
   width: 10vw;
   padding: 0.1em 0.5em;
-  height: 6vw;
+  height: fit-content;
 }
-#main #allsettingBox .upperrow .icon-box i {
+#main #allsettingBox .upperrow abbr .icon-box i {
   width: 100%;
-  height: 100%;
+  height: 3.5rem;
   background: #303030;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
-#main #allsettingBox .upperrow .icon-box i:hover {
+#main #allsettingBox .upperrow abbr .icon-box i:hover {
   background: #00BFFF;
   color: #000;
 }
-#main #allsettingBox .upperrow .icon-box small {
-  font-family: "Roboto";
-  font-size: 0.7em;
-}
-#main #allsettingBox .lowerrow {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 1em;
-}
-#main #allsettingBox .lowerrow .icon-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  row-gap: 0.4em;
-  width: 10vw;
-  padding: 0.1em 0.5em;
-  height: 6vw;
-}
-#main #allsettingBox .lowerrow .icon-box i {
-  width: 100%;
-  height: 100%;
-  background: #303030;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease;
-}
-#main #allsettingBox .lowerrow .icon-box i:hover {
-  background: #00BFFF;
-  color: #000;
-}
-#main #allsettingBox .lowerrow .icon-box small {
+#main #allsettingBox .upperrow abbr .icon-box small {
   font-family: "Roboto";
   font-size: 0.7em;
 }
@@ -865,7 +1014,7 @@ html, body {
   align-items: center;
   gap: 1.2rem;
   height: 7vh;
-  z-index: 99999;
+  z-index: 9999;
 }
 #main #taskbar .allitems {
   display: flex;

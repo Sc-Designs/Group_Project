@@ -107,31 +107,37 @@ let iconOfAllSetings = [
     name: "WIFI",
     icon: "ri-wifi-line",
     class: "wifi",
+    isActive: false,
   },
   {
     name: "BLUETOOTH",
     icon: "ri-bluetooth-line",
     class: "bluetooth",
+    isActive: false,
   },
   {
     name: "VPN",
     icon: "ri-shield-keyhole-line",
     class: "vpn",
+    isActive: false,
   },
   {
     name: "AIRPLANE MODE",
     icon: "ri-flight-takeoff-line",
     class: "airplane",
+    isActive: false,
   },
   {
     name: "ENARGY SAVER",
     icon: "ri-battery-charge-line",
-    class: "wifi",
+    class: "enargySaver",
+    isActive: false,
   },
   {
     name: "NIGHT LAIGHT",
     icon: "ri-contrast-2-line",
-    class: "wifi",
+    class: "nightLight",
+    isActive: false,
   },
 ];
 const menuBar = ()=>{
@@ -154,6 +160,37 @@ setInterval(()=>{
     let second = date.getSeconds().toString().padStart(2, "0");
     time.textContent = `${houre} : ${minute} : ${second}`
 },1000);
+const openDB = () => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("MyOS_DB", 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("videos")) {
+        db.createObjectStore("videos", { keyPath: "id" });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const saveVideoToDB = async (blob) => {
+  const db = await openDB();
+  const transaction = db.transaction("videos", "readwrite");
+  const store = transaction.objectStore("videos");
+  const id = Date.now();
+  const videoData = { id, blob };
+
+  const request = store.add(videoData);
+  request.onsuccess = () => {
+    alert("🎥 Video saved to OS Files/Video section (IndexedDB)!");
+    loadVideosInOS();
+  };
+};
+
+
 taskbarIcon.forEach((item)=>{
   let structure = ` <abbr title="${item.abbr}">
                         <i class="${item.icon}"></i>
@@ -235,20 +272,43 @@ settings.addEventListener("click",(e)=>{
     flag = 0;
   }
 })
-for(let i = 0; i<3; i++){
-  let structure = `<div class="icon-box ${iconOfAllSetings[i].class}">
-                    <i class="${iconOfAllSetings[i].icon}"></i>
+function upper(){
+  upperrow.innerHTML = "";
+  for(let i = 0; i<iconOfAllSetings.length; i++){
+  let structure = `
+  <abbr title="${iconOfAllSetings[i].name}">
+  <div class="icon-box">
+                    <i class="${iconOfAllSetings[i].icon}  ${
+    iconOfAllSetings[i].class
+  }" style="${iconOfAllSetings[i].isActive && "background : #00BFFF"}"></i>
                     <small>${iconOfAllSetings[i].name}</small>
-                </div>`;
+                </div>
+                </abbr>
+                `;
   upperrow.innerHTML += structure;
 }
-for (let i = 3; i < iconOfAllSetings.length; i++) {
-  let structure = `<div class="icon-box ${iconOfAllSetings[i].class}">
-                    <i class="${iconOfAllSetings[i].icon}"></i>
-                    <small>${iconOfAllSetings[i].name}</small>
-                </div>`;
-  lowerrow.innerHTML += structure;
 }
+upper();
+let nightFlag = 0;
+let nightMode = document.getElementById("nightMode");
+upperrow.addEventListener("click", (e) => {
+  if(e.target.classList.contains("nightLight")){
+    iconOfAllSetings.map((item)=> {
+      if(item.class === "nightLight" && nightFlag === 0){
+        item.isActive = true;
+        nightFlag = 1;
+        nightMode.style.display = "block";
+        upper();
+      } else if (item.class === "nightLight" && nightFlag === 1) {
+        item.isActive = false;
+        nightMode.style.display = "none";
+        nightFlag = 0;
+        upper();
+      }
+    });
+  }
+});
+
 
 // Taskbar view and hide function
 let hideTaskbarTimeout;
@@ -333,7 +393,8 @@ NoteTabTop.addEventListener("mousemove", (e) => {
 });
 NoteTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Notetab.style.zIndex = "7";
+  Notetab.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
@@ -344,6 +405,8 @@ NoteTabTop.addEventListener("mouseup", () => {
 // File tab and it's funtion like minimize, maximize and close
 let Filestab = document.querySelector("#Filestab");
 let filesmaximize = document.querySelector(".filemaximize");
+let imageScreen = document.querySelector(".imageScreen");
+let videoScreen = document.querySelector(".videoFileSection");
 let fileFlag = 0;
 filesmaximize.addEventListener("click", () => {
   if (fileFlag === 0) {
@@ -352,6 +415,8 @@ filesmaximize.addEventListener("click", () => {
     Filestab.style.transition = "width 0.4s ease, height 0.4s ease";
     Filestab.style.top = "50%";
     Filestab.style.left = "50%";
+    imageScreen.style.gridTemplateColumns = "repeat(4,1fr)";
+    videoScreen.style.gridTemplateColumns = "repeat(4,1fr)";
     fileFlag = 1;
   } else {
     Filestab.style.width = "50vw";
@@ -359,6 +424,8 @@ filesmaximize.addEventListener("click", () => {
     Filestab.style.transition = "width 0.4s ease, height 0.4s ease";
     Filestab.style.top = "50%";
     Filestab.style.left = "50%";
+    imageScreen.style.gridTemplateColumns = "repeat(3,1fr)";
+    videoScreen.style.gridTemplateColumns = "repeat(3,1fr)";
     fileFlag = 0;
   }
 });
@@ -398,7 +465,8 @@ FileTabTop.addEventListener("mousemove", (e) => {
 
 FileTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Filestab.style.zIndex = "7";
+  Filestab.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
@@ -410,7 +478,6 @@ let homeScreenFolderArr = [];
 let fileNav = document.querySelector(".fileNav");
 let desktopScreen = document.querySelector(".desktopScreen");
 let homeScreen = document.querySelector(".homeScreen");
-let imageScreen = document.querySelector(".imageScreen");
 let putFile = () => {
   homeScreen.innerHTML = "";
 homeScreenFolderArr.map(item=>{
@@ -426,33 +493,70 @@ fileNav.addEventListener("click",(e)=>{
     desktopScreen.style.display = "block";
     homeScreen.style.display = "none";
     imageScreen.style.display = "none";
+    videoScreen.style.display = "none";
   } else if (e.target.className === "home") {
     homeScreen.style.display = "grid";
     imageScreen.style.display = "none";
     desktopScreen.style.display = "none";
+    videoScreen.style.display = "none";
   } else if (e.target.className === "image") {
     imageScreen.style.display = "grid";
     homeScreen.style.display = "none";
     desktopScreen.style.display = "none";
+    videoScreen.style.display = "none";
     loadImagesInOS();
+  } else if (e.target.className === "video") {
+    videoScreen.style.display = "grid";
+    imageScreen.style.display = "none";
+    homeScreen.style.display = "none";
+    desktopScreen.style.display = "none";
+    loadVideosInOS();
   }
 })
+
+let wallpapers = document.querySelector(".wallpapers");
 function loadImagesInOS() {
   const savedImages = JSON.parse(localStorage.getItem("savedImages")) || [];
 
   savedImages.forEach((img,i) => {
     if (ImageSet.has(img.id)) return;
-    let image = `<abbr title="Click for open or double click for wallpaper">
+    let image = `<abbr title="double click for Open">
                                     <div class="icon">
                                         <img src="${img.data}" alt="">
                                         <small>Photo ${i}</small>
                                     </div>
                                 </abbr>`;
     imageScreen.innerHTML += image;
+    wallpapers.innerHTML += image;
     ImageSet.add(img.id);
   });
 }
 
+function loadVideosInOS() {
+  const videoScreen = document.querySelector(".videoFileSection");
+  videoScreen.innerHTML = "";
+
+  openDB().then((db) => {
+    const transaction = db.transaction("videos", "readonly");
+    const store = transaction.objectStore("videos");
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const videos = request.result;
+
+      videos.forEach((video, i) => {
+        const url = URL.createObjectURL(video.blob);
+        videoScreen.innerHTML += `
+          <abbr title="Double click to open">
+                                <div class="icon">
+                                    <video src="${url}"></video>
+                                    <small>Video${i + 1}</small>
+                                </div>
+                            </abbr>
+        `;
+      });
+    };
+  });
+}
 // Previwer Tab and it's functions like minimize, maximize, close
 let previewer = document.querySelector("#previewer");
 let previewerclose = document.querySelector(".previewerclose");
@@ -508,22 +612,14 @@ previewerTabTop.addEventListener("mousemove", (e) => {
 });
 previewerTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  previewer.style.zIndex = "7";
+  previewer.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Chrome.style.zIndex = "4";
   Filestab.style.zIndex = "3";
   Notetab.style.zIndex = "2";
 });
-
-// Screen wallpaper change
-imageScreen.addEventListener("click",(e)=>{
-  if(e.target.src !== undefined){
-    localStorage.removeItem("backGround");
-    localStorage.setItem("backGround", e.target.src)
-    main.style.backgroundImage = `url("${e.target.src}")`
-  }
-})
 
 // Pic viewer Tab
 let previewerScreen = document.querySelector(".previewerScreen");
@@ -547,6 +643,27 @@ imageScreen.addEventListener("dblclick",(e)=>{
     menuBar()
   }
 })
+videoScreen.addEventListener("dblclick", (e) => {
+  if (e.target.src !== undefined) {
+    previewer.style.display = "block";
+    previewerScreen.innerHTML = "";
+    let video = document.createElement("video");
+    video.src = e.target.src;
+    video.style.height = "100%";
+    video.style.width = "100%";
+    video.style.objectFit = "contain";
+    video.controls = true;
+    previewerScreen.appendChild(video);
+    previewer.style.zIndex = "99";
+    if (taskbarmenu.some((item) => item.class === "photo")) return;
+    taskbarmenu.push({
+      src: "./assets/photo.png",
+      class: "photo",
+      isActive: true,
+    });
+    menuBar();
+  }
+});
 
 // Chrome tab and it's funtioc like minimize and maximize
 let Chrome = document.querySelector("#chrome");
@@ -667,7 +784,8 @@ chromeTabTop.addEventListener("mousemove", (e) => {
 });
 chromeTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  Chrome.style.zIndex = "7";
+  Chrome.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   camera.style.zIndex = "6";
   terminal.style.zIndex = "5";
   Filestab.style.zIndex = "4";
@@ -788,7 +906,8 @@ terminalTabTop.addEventListener("mousemove", (e) => {
 
 terminalTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  terminal.style.zIndex = "7";
+  terminal.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   camera.style.zIndex = "6";
   Chrome.style.zIndex = "5";
   Filestab.style.zIndex = "4";
@@ -796,23 +915,133 @@ terminalTabTop.addEventListener("mouseup", () => {
   previewer.style.zIndex = "2";
 });
 let rightClickMenu = document.getElementById("rightClickMenu");
+let personalize = document.getElementById("personalize");
 document.addEventListener("contextmenu", (e)=>{
   e.preventDefault();
   rightClickMenu.style.display = "flex";
   rightClickMenu.style.top = e.clientY + "px";
   rightClickMenu.style.left = e.clientX + "px";
+  rightClickMenu.style.zIndex = "9999"
 })
+
+rightClickMenu.addEventListener("click",(e)=>{
+  if (e.target.textContent === "Personalize") {
+    personalize.style.display = "block";
+    if (taskbarmenu.some((item) => item.class === "personalize")) return;
+    taskbarmenu.push({
+      src: "./assets/pen.png",
+      class: "personalize",
+      isActive: true,
+    });
+    menuBar();
+    loadImagesInOS();
+  }
+})
+
+const allWallpapers = document.querySelector(".wallpapers");
+
+allWallpapers.addEventListener("click",(e)=>{
+  if (e.target.src !== undefined) {
+    localStorage.removeItem("backGround");
+    localStorage.setItem("backGround", e.target.src);
+    main.style.backgroundImage = `url("${e.target.src}")`;
+  }
+})
+let personalizeFlag = 0;
+let PersonalizeFlag = 0;
+let personalizemaximize = document.querySelector(".personalizemaximize");
+personalizemaximize.addEventListener("click", () => {
+  if (personalizeFlag === 0) {
+    personalize.style.width = "100vw";
+    personalize.style.height = "100vh";
+    personalize.style.transition = "width 0.4s ease, height 0.4s ease";
+    personalize.style.top = "50%";
+    personalize.style.left = "50%";
+    allWallpapers.style.gridTemplateColumns= "repeat(6, 1fr)";
+    personalizeFlag = 1;
+  } else {
+    personalize.style.width = "50vw";
+    personalize.style.height = "50vh";
+    personalize.style.transition = "width 0.4s ease, height 0.4s ease";
+    personalize.style.top = "50%";
+    personalize.style.left = "50%";
+    allWallpapers.style.gridTemplateColumns= "repeat(3, 1fr)";
+    personalizeFlag = 0;
+  }
+});
+let personalizeminimize = document.querySelector(".personalizeminimize");
+personalizeminimize.addEventListener("click", () => {
+  personalize.style.scale = "0.2";
+  personalize.style.transition = "top 0.3s ease";
+  personalize.style.top = "100%";
+  PersonalizeFlag = 0;
+});
+let personalizeclose = document.querySelector(".personalizeclose");
+personalizeclose.addEventListener("click", () => {
+  personalize.style.display = "none";
+  taskbarmenu = taskbarmenu.filter((item) => item.class !== "personalize");
+  menuBar();
+});
+
+// personalize drag function
+let personalizeTabTop = document.querySelector("#personalize .top");
+personalizeTabTop.addEventListener("mousedown", (e) => {
+  isDragging = false;
+  isDragging = true;
+  offsetX = e.clientX - personalize.offsetLeft;
+  offsetY = e.clientY - personalize.offsetTop;
+});
+personalizeTabTop.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  personalize.style.zIndex = "999";
+  const containerRect = container.getBoundingClientRect();
+  const FileRect = personalize.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  personalize.style.top = y + "px";
+  personalize.style.left = x + "px";
+});
+
+personalizeTabTop.addEventListener("mouseup", () => {
+  isDragging = false;
+  personalize.style.zIndex = "8";
+  terminal.style.zIndex = "7";
+  camera.style.zIndex = "6";
+  Chrome.style.zIndex = "5";
+  Filestab.style.zIndex = "4";
+  Notetab.style.zIndex = "3";
+  previewer.style.zIndex = "2";
+});
 
 let newText = document.querySelector(".new-text");
 let newSection = document.querySelector(".new-section");
 let folderOption = document.getElementById("folder-option");
 let folderCounter = 0;
-newText.addEventListener("mouseenter",()=>{
+let enterTimer;
+let hasEnteredNewSection = false;
+
+newText.addEventListener("mouseenter", () => {
   newSection.style.display = "flex";
-})
+  hasEnteredNewSection = false;
+  enterTimer = setTimeout(() => {
+    if (!hasEnteredNewSection) {
+      newSection.style.display = "none";
+    }
+  }, 1500);
+});
+
+newSection.addEventListener("mouseenter", () => {
+  hasEnteredNewSection = true;
+  clearTimeout(enterTimer);
+});
+
 newSection.addEventListener("mouseleave", () => {
   newSection.style.display = "none";
 });
+
+
 folderOption.addEventListener("click",()=>{
   DesktopApplication.push({
     src: "./assets/folder.png",
@@ -872,12 +1101,12 @@ cameraminimize.addEventListener("click", () => {
 let cameraclose = document.querySelector(".cameraclose");
 cameraclose.addEventListener("click", () => {
   camera.style.display = "none";
-  let stream = cameraFeed.srcObject;
+  cameraFeed.forEach(item=>{
+  let stream = item.srcObject;
   if (stream) {
     let tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
   }
-  cameraFeed.forEach(item=>{
     item.srcObject = null;
   });
   taskbarmenu = taskbarmenu.filter((item) => item.class !== "camera");
@@ -905,7 +1134,8 @@ cameraTabTop.addEventListener("mousemove", (e) => {
 
 cameraTabTop.addEventListener("mouseup", () => {
   isDragging = false;
-  camera.style.zIndex = "7";
+  camera.style.zIndex = "8";
+  personalize.style.zIndex = "7";
   terminal.style.zIndex = "6";
   Chrome.style.zIndex = "5";
   Filestab.style.zIndex = "4";
@@ -919,19 +1149,20 @@ filters.addEventListener("click", (e) => {
   const className = e.target.className;
   switch (className) {
     case "fliter1":
-      currentFilter = "grayscale(1)";
+      currentFilter = "blur(1.5px) brightness(1.1) contrast(0.9)";
       break;
     case "fliter2":
-      currentFilter = "hue-rotate(200deg)";
+      currentFilter = "sepia(0.3) brightness(1.2) contrast(1.1)";
       break;
     case "fliter3":
-      currentFilter = "invert(1)";
+      currentFilter = "sepia(0.8) contrast(1.3)";
       break;
     case "fliter4":
-      currentFilter = "saturate(4)";
+      currentFilter =
+        "sepia(0.3) hue-rotate(-15deg) contrast(1.4) saturate(1.8)";
       break;
     case "fliter5":
-      currentFilter = "contrast(2)";
+      currentFilter = "brightness(1.2) hue-rotate(330deg) saturate(2)";
       break;
     case "normal":
       currentFilter = "";
@@ -960,6 +1191,85 @@ camerabutton.addEventListener("click", () => {
   alert("📸 Photo saved to OS Files/Image section!");
   loadImagesInOS();
 });
+
+const videoButton = document.querySelector(".videobutton");
+const videoFeed = document.getElementById("cameraFeed");
+const timerDisplay = document.getElementById("recordTimer");
+const recordCanvas = document.getElementById("recordCanvas");
+
+let mediaRecorder;
+let recordedChunks = [];
+let isRecording = false;
+let recordStartTime;
+let timerInterval;
+let drawInterval;
+let maxDuration = 40;
+
+videoButton.addEventListener("click", () => {
+  filters.style.pointerEvents = "none";
+  filters.style.opacity = "50%";
+
+  if (!isRecording) {
+    recordedChunks = [];
+    const ctx = recordCanvas.getContext("2d");
+    recordCanvas.width = videoFeed.videoWidth;
+    recordCanvas.height = videoFeed.videoHeight;
+    drawInterval = setInterval(() => {
+      ctx.filter = currentFilter;
+      ctx.translate(recordCanvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(videoFeed, 0, 0, recordCanvas.width, recordCanvas.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }, 30);
+
+    const canvasStream = recordCanvas.captureStream(30);
+
+    mediaRecorder = new MediaRecorder(canvasStream, {
+      mimeType: "video/webm",
+    });
+
+    mediaRecorder.ondataavailable = function (e) {
+      if (e.data.size > 0) {
+        recordedChunks.push(e.data);
+      }
+    };
+
+    mediaRecorder.onstop = function () {
+      clearInterval(timerInterval);
+      clearInterval(drawInterval);
+      timerDisplay.textContent = "00:00";
+      isRecording = false;
+      filters.style.pointerEvents = "auto";
+      filters.style.opacity = "100%";
+      videoButton.innerHTML = '<i class="ri-video-on-fill"></i>';
+
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      saveVideoToDB(blob);
+    };
+    
+
+    mediaRecorder.start();
+    isRecording = true;
+    videoButton.innerHTML = '<i class="ri-video-off-fill"></i>';
+
+    recordStartTime = Date.now();
+    timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+      const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+      const seconds = String(elapsed % 60).padStart(2, "0");
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+
+      if (elapsed >= maxDuration) {
+        mediaRecorder.stop();
+      }
+    }, 1000);
+  } else {
+    mediaRecorder.stop(); 
+  }
+});
+
+
+
 
 loadImagesInOS();
 // Opne app from Screen
@@ -1037,7 +1347,7 @@ container.addEventListener("dblclick", (e) => {
     menuBar();
 
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         cameraFeed.forEach((item)=>{
           item.srcObject = stream;
@@ -1073,7 +1383,8 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
-    camera.style.zIndex = "33";
+    camera.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     Notetab.style.zIndex = "99";
     iconFlag = 1;
   } else if (e.target.classList.contains("note") && iconFlag === 1) {
@@ -1089,7 +1400,8 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
-    camera.style.zIndex = "33";
+    camera.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     Filestab.style.zIndex = "99";
     filesiconFlag = 1;
   } else if (e.target.classList.contains("file") && filesiconFlag === 1) {
@@ -1105,7 +1417,8 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "10";
     Chrome.style.zIndex = "11";
     terminal.style.zIndex = "12";
-    camera.style.zIndex = "33";
+    camera.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     previewer.style.zIndex = "99";
     previewFalg = 1;
   } else if (e.target.classList.contains("photo") && previewFalg === 1) {
@@ -1114,6 +1427,7 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "9";
     previewFalg = 0;
   } else if (e.target.classList.contains("chrome") && ChromeFlag === 0) {
+    Chrome.style.display = "block"
     Chrome.style.scale = "1";
     Chrome.style.top = "50%";
     Chrome.style.transition = "top 0.3s ease";
@@ -1121,15 +1435,23 @@ allItems.addEventListener("click", (e) => {
     Filestab.style.zIndex = "10";
     previewer.style.zIndex = "11";
     terminal.style.zIndex = "12";
-    camera.style.zIndex = "33";
+    camera.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     Chrome.style.zIndex = "99";
     ChromeFlag = 1;
+    taskbarmenu.some((item) => {
+      if (item.class === "chrome" && item.isActive === false) {
+        item.isActive = true;
+      }
+    });
+    menuBar();
   } else if (e.target.classList.contains("chrome") && ChromeFlag === 1) {
     Chrome.style.scale = "0.2";
     Chrome.style.top = "100%";
     Chrome.style.zIndex = "9";
     ChromeFlag = 0;
   } else if (e.target.classList.contains("terminal") && TerminalFlag === 0) {
+    terminal.style.display = "block"
     terminal.style.scale = "1";
     terminal.style.top = "50%";
     terminal.style.transition = "top 0.3s ease";
@@ -1138,8 +1460,15 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "11";
     Chrome.style.zIndex = "12";
     camera.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     terminal.style.zIndex = "99";
     TerminalFlag = 1;
+    taskbarmenu.some((item) => {
+      if (item.class === "terminal" && item.isActive === false) {
+        item.isActive = true;
+      }
+    });
+    menuBar();
   } else if (e.target.classList.contains("terminal") && TerminalFlag === 1) {
     terminal.style.scale = "0.2";
     terminal.style.top = "100%";
@@ -1154,6 +1483,7 @@ allItems.addEventListener("click", (e) => {
     previewer.style.zIndex = "11";
     Chrome.style.zIndex = "12";
     terminal.style.zIndex = "13";
+    personalize.style.zIndex = "14";
     camera.style.zIndex = "99";
     cameraFlag = 1;
   } else if (e.target.classList.contains("camera") && cameraFlag === 1) {
@@ -1161,5 +1491,22 @@ allItems.addEventListener("click", (e) => {
     camera.style.top = "100%";
     camera.style.zIndex = "9";
     cameraFlag = 0;
+  } else if (e.target.classList.contains("personalize") && PersonalizeFlag === 0) {
+    personalize.style.scale = "1";
+    personalize.style.top = "50%";
+    personalize.style.transition = "top 0.3s ease";
+    Notetab.style.zIndex = "9";
+    Filestab.style.zIndex = "10";
+    previewer.style.zIndex = "11";
+    Chrome.style.zIndex = "12";
+    terminal.style.zIndex = "13";
+    camera.style.zIndex = "14";
+    personalize.style.zIndex = "99";
+    PersonalizeFlag = 1;
+  } else if (e.target.classList.contains("personalize") && PersonalizeFlag === 1) {
+    personalize.style.scale = "0.2";
+    personalize.style.top = "100%";
+    personalize.style.zIndex = "9";
+    PersonalizeFlag = 0;
   }
 });
