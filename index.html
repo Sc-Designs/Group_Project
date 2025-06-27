@@ -12,6 +12,7 @@
 </head>
 <body>
     <section id="main">
+        <div id="nightMode"></div>
         <section id="screen">
             <section id="Notetab">
                 <div class="top">
@@ -55,42 +56,44 @@
                         <div class="homeScreen">
                         </div>
                         <div class="imageScreen">
-                                <abbr title="Click for open or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                     <div class="icon">
                                         <img class="1bg" src="./assets/the-sheryians-coding-school-indrapuri-bhopal-computer-training-institutes-for-python-zzgnspdx9i.webp" alt="">
                                         <small>Sheriyans Team</small>
                                     </div>
                                 </abbr>
-                                <abbr title="Click for or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                     <div class="icon">
                                     <img class="2bg" src="./assets/8f4c2f5d3df68aaf6d42ab0f49460477.webp" alt="">
                                     <small>Motivation</small>
                                 </div>
                                 </abbr>
-                                <abbr title="Click for open or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                 <div class="icon">
                                     <img class="3bg" src="./assets/Mastering_the_Art_of_Resume-RESUMECOURSEPOSTER_NK6hP8IP8.webp" alt="">
                                     <small>Art Of Resume</small>
                                 </div>
                                 </abbr>
-                                <abbr title="Click for open or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                 <div class="icon">
                                     <img class="4bg" src="./assets/py2uuLJLSWqR5zXIJZHH.webp" alt="">
                                     <small>Frontent Domination</small>
                                 </div>
                                 </abbr>
-                                <abbr title="Click for open or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                 <div class="icon">
                                     <img class="logo" src="./assets/logo.webp" style="max-width: 8rem;" alt="">
                                     <small>Sheriyans Logo</small>
                                 </div>
                                 </abbr>
-                                <abbr title="Click for open or double click for wallpaper">
+                                <abbr title="Double click for Open">
                                 <div class="icon">
                                     <img class="5bg" src="./assets/photo-1636760243166-c2c0c62ba633.avif" alt="">
                                     <small>Abstract Photo</small>
                                 </div>
                                 </abbr>
+                        </div>
+                        <div class="videoFileSection">
                         </div>
                     </div>
                 </div>
@@ -149,20 +152,20 @@
                 </div>
             </section>
             <section id="rightClickMenu">
-                <h1><i class="ri-eye-line px-2"></i> View</h1>
-                <h1><i class="ri-sort-asc px-2"></i> Sort by</h1>
-                <h1><i class="ri-reset-right-line px-2"></i> Refresh</h1>
+                <h1><i class="ri-eye-line" style="padding-right: 2%;"></i>View</h1>
+                <h1><i class="ri-sort-asc" style="padding-right: 2%;"></i>Sort by</h1>
+                <h1><i class="ri-reset-right-line" style="padding-right: 2%;"></i>Refresh</h1>
                 <div class="partition"></div>
-                <h1><i class="ri-arrow-go-back-line px-2"></i> Undo delete</h1>
+                <h1><i class="ri-arrow-go-back-line" style="padding-right: 2%;"></i>Undo delete</h1>
                 <div>
-                    <h1 class="new-text"><i class="ri-add-circle-line px-2"></i> New</h1>
+                    <h1 class="new-text"><i class="ri-add-circle-line" style="padding-right: 2%;"></i>New</h1>
                 </div>
                 <div class="partition"></div>
-                <h1><i class="ri-computer-line px-2"></i> Display settings</h1>
-                <h1><i class="ri-pencil-line px-2"></i> Personalize</h1>
+                <h1><i class="ri-computer-line" style="padding-right: 2%;"></i>Display settings</h1>
+                    <h1><i class="ri-pencil-line" style="padding-right: 2%;"></i><abbr title="Click to Open">Personalize</abbr></h1>
                 <div class="partition"></div>
-                <h1><i class="ri-terminal-box-fill px-2"></i> Open in terminal</h1>
-                <h1><i class="ri-more-line px-2"></i> Show more option</h1>
+                <h1><i class="ri-terminal-box-fill" style="padding-right: 2%;"></i>Open in terminal</h1>
+                <h1><i class="ri-more-line" style="padding-right: 2%;"></i>Show more option</h1>
                 <section class="new-section">
                     <p id="folder-option">📁 Folder</p>
                     <p id="new">↗️ Shortcut </p>
@@ -186,26 +189,63 @@
                     </div>
                 </div>
                 <div class="camerabody">
-                    <video id="cameraFeed" autoplay playsinline class="mainCamera"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="mainCamera"></video>
                     <abbr title="Take Photo">
                         <div class="camerabutton"><i class="ri-camera-lens-line"></i></div>
                     </abbr>
+                    <abbr title="Take Video">
+                        <div class="videobutton"><i class="ri-video-on-fill"></i></div>
+                    </abbr>
+                    <p id="recordTimer">00:00</p>
                     <div class="filters">
                     <h1>Filters</h1>
-                    <video id="cameraFeed" autoplay playsinline class="normal"></video>
-                    <video id="cameraFeed" autoplay playsinline class="fliter1"></video>
-                    <video id="cameraFeed" autoplay playsinline class="fliter2"></video>
-                    <video id="cameraFeed" autoplay playsinline class="fliter3"></video>
-                    <video id="cameraFeed" autoplay playsinline class="fliter4"></video>
-                    <video id="cameraFeed" autoplay playsinline class="fliter5"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="normal"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="fliter1"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="fliter2"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="fliter3"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="fliter4"></video>
+                    <video id="cameraFeed" autoplay playsinline muted class="fliter5"></video>
                     </div>
                     <canvas id="photoCanvas" style="display: none;"></canvas>
+                    <canvas id="recordCanvas" style="display: none;"></canvas>
+                </div>
+            </section>
+            <section id="personalize">
+                <div class="top">
+                    <h4>Personalize</h4>
+                    <div class="menu">
+                        <div class="personalizeminimize">_</div>
+                        <div class="personalizemaximize">▢</div>
+                        <div class="personalizeclose close">×</div>
+                    </div>
+                </div>
+                <div class="personalizebody">
+                    <h1>Set Your Wallpaper</h1>
+                    <div class="wallpapers">
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/py2uuLJLSWqR5zXIJZHH.webp" alt="">
+                        </abbr>
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/Mastering_the_Art_of_Resume-RESUMECOURSEPOSTER_NK6hP8IP8.webp" alt="">
+                        </abbr>
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/the-sheryians-coding-school-indrapuri-bhopal-computer-training-institutes-for-python-zzgnspdx9i.webp" alt="">
+                        </abbr>
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/photo-1636760243166-c2c0c62ba633.avif" alt="">
+                        </abbr>
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/photo-1710184756393-eeae4d4e5d48.avif" alt="">
+                        </abbr>
+                        <abbr title="Click to set Wallpaper">
+                            <img src="assets/8f4c2f5d3df68aaf6d42ab0f49460477.webp" alt="">
+                        </abbr>
+                    </div>
                 </div>
             </section>
         </section>
         <div id="allsettingBox">
             <div class="upperrow"></div>
-            <div class="lowerrow"></div>
             <div class="sound">
                 <i class="ri-volume-up-line"></i>
                 <input type="range">
