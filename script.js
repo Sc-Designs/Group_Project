@@ -1104,7 +1104,7 @@ cameraclose.addEventListener("click", () => {
   cameraFeed.forEach(item=>{
   let stream = item.srcObject;
   if (stream) {
-    let tracks = stream.getTracks();
+    const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
   }
     item.srcObject = null;
