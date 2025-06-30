@@ -653,6 +653,8 @@ videoScreen.addEventListener("dblclick", (e) => {
     video.style.width = "100%";
     video.style.objectFit = "contain";
     video.controls = true;
+    video.muted = false;
+    video.volume = 1.0;
     previewerScreen.appendChild(video);
     previewer.style.zIndex = "99";
     if (taskbarmenu.some((item) => item.class === "photo")) return;
