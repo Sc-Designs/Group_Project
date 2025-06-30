@@ -1273,9 +1273,8 @@ videoButton.addEventListener("click", () => {
         }
       }, 1000);
     });
-  } 
 } else {
-    mediaRecorder.stop();
+  mediaRecorder.stop();
   }
 });
 
