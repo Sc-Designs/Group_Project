@@ -1224,6 +1224,12 @@ videoButton.addEventListener("click", () => {
 
     const canvasStream = recordCanvas.captureStream(30);
 
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((audioStream) => {
+  const combinedStream = new MediaStream([
+    ...canvasStream.getVideoTracks(),
+    ...audioStream.getAudioTracks(),
+  ]);
+
     mediaRecorder = new MediaRecorder(canvasStream, {
       mimeType: "video/webm",
     });
