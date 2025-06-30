@@ -1273,7 +1273,8 @@ videoButton.addEventListener("click", () => {
         }
       }, 1000);
     });
-  } else {
+  } 
+} else {
     mediaRecorder.stop();
   }
 });
