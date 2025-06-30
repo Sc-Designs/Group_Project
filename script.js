@@ -1227,54 +1227,57 @@ videoButton.addEventListener("click", () => {
     const canvasStream = recordCanvas.captureStream(30);
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((audioStream) => {
-  const combinedStream = new MediaStream([
-    ...canvasStream.getVideoTracks(),
-    ...audioStream.getAudioTracks(),
-  ]);
+      const combinedStream = new MediaStream([
+        ...canvasStream.getVideoTracks(),
+        ...audioStream.getAudioTracks(),
+      ]);
 
-    mediaRecorder = new MediaRecorder(canvasStream, {
-      mimeType: "video/webm",
+      mediaRecorder = new MediaRecorder(combinedStream, {
+        mimeType: "video/webm",
+      });
+
+      mediaRecorder.ondataavailable = function (e) {
+        if (e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = function () {
+        clearInterval(timerInterval);
+        clearInterval(drawInterval);
+        timerDisplay.textContent = "00:00";
+        isRecording = false;
+        filters.style.pointerEvents = "auto";
+        filters.style.opacity = "100%";
+        videoButton.innerHTML = '<i class="ri-video-on-fill"></i>';
+
+        const blob = new Blob(recordedChunks, { type: "video/webm" });
+        saveVideoToDB(blob);
+
+        audioStream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      isRecording = true;
+      videoButton.innerHTML = '<i class="ri-video-off-fill"></i>';
+
+      recordStartTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+        const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+        const seconds = String(elapsed % 60).padStart(2, "0");
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+
+        if (elapsed >= maxDuration) {
+          mediaRecorder.stop();
+        }
+      }, 1000);
     });
-
-    mediaRecorder.ondataavailable = function (e) {
-      if (e.data.size > 0) {
-        recordedChunks.push(e.data);
-      }
-    };
-
-    mediaRecorder.onstop = function () {
-      clearInterval(timerInterval);
-      clearInterval(drawInterval);
-      timerDisplay.textContent = "00:00";
-      isRecording = false;
-      filters.style.pointerEvents = "auto";
-      filters.style.opacity = "100%";
-      videoButton.innerHTML = '<i class="ri-video-on-fill"></i>';
-
-      const blob = new Blob(recordedChunks, { type: "video/webm" });
-      saveVideoToDB(blob);
-    };
-    
-
-    mediaRecorder.start();
-    isRecording = true;
-    videoButton.innerHTML = '<i class="ri-video-off-fill"></i>';
-
-    recordStartTime = Date.now();
-    timerInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
-      const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
-      const seconds = String(elapsed % 60).padStart(2, "0");
-      timerDisplay.textContent = `${minutes}:${seconds}`;
-
-      if (elapsed >= maxDuration) {
-        mediaRecorder.stop();
-      }
-    }, 1000);
   } else {
-    mediaRecorder.stop(); 
+    mediaRecorder.stop();
   }
 });
+
 
 
 
